@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Fragment-Name
+Bundle-SymbolicName: eu.fp7.scase.umlrec.win32.x86;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: %Bundle-Vendor
+Fragment-Host: eu.fp7.scase.umlrec;bundle-version="1.0.0"
+Eclipse-PlatformFilter: (& (osgi.os=win32) (osgi.arch=x86))
+Bundle-Localization: OSGI-INF/l10n/bundle.win32.x64
