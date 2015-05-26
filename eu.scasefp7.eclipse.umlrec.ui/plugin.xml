@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.importWizards">
+      <category
+            id="eu.fp7.scase.category"
+            name="%category.name">
+      </category>
+      <wizard
+            category="eu.fp7.scase.category"
+            class="eu.scasefp7.eclipse.umlrec.ui.wizard.MyWizard"
+            icon="images/s-case.png"
+            id="eu.fp7.scase.umlrec.importWizard"
+            name="%wizard.name">
+      </wizard>
+   </extension>
+</plugin>
