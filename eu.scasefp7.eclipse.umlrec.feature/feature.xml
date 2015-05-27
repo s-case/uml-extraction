@@ -4,7 +4,7 @@
       label="UML recognizer"
       version="1.0.0.qualifier"
       provider-name="S-CASE Consortium"
-      plugin="eu.fp7.scase.umlrec.ui"
+      plugin="eu.scasefp7.eclipse.umlrec.ui"
       os="win32"
       arch="x86,x86_64">
 
@@ -225,22 +225,32 @@
    </url>
 
    <plugin
-         id="eu.fp7.scase.umlrec"
+         id="eu.scasefp7.eclipse.umlrec"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="eu.fp7.scase.umlrec.ui"
+         id="eu.scasefp7.eclipse.umlrec.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="eu.fp7.scase.umlrec.win32.x86"
+         id="eu.scasefp7.eclipse.umlrec.win32.x86"
          os="win32"
          arch="x86"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="eu.scasefp7.eclipse.umlrec.win32.x64"
+         os="win32"
+         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
