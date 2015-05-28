@@ -14,7 +14,6 @@ public class UMLRecognizerJNI {
 	    try {
 	    	ArrayList<String> list = new ArrayList<String>();
 	    	
-	    	
 	    	list.add("liblept168"); //$NON-NLS-1$
 	    	list.add("libtesseract302"); //$NON-NLS-1$
 	    	list.add("opencv_core242"); //$NON-NLS-1$
@@ -22,7 +21,6 @@ public class UMLRecognizerJNI {
 	    	list.add("opencv_imgproc242"); //$NON-NLS-1$
 	  
 	    	list.add("UMLrecogn"); //$NON-NLS-1$
-
 
 	    	/**
 	    	 * Iterate through the list of libraries and remove all libraries from the list
