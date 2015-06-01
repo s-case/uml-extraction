@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import eu.scasefp7.eclipse.umlrec.MissingRecognizerNativeException;
 public class UMLRecognizerJNI {
-
+	
     static {
 	    try {
 	    	ArrayList<String> list = new ArrayList<String>();
@@ -24,7 +24,7 @@ public class UMLRecognizerJNI {
 	  
 	    	list.add("UMLrecogn"); //$NON-NLS-1$
 
-	    	System.out.println("UMLRecognizer JNI (Linux/x64) starting");
+	    	System.out.println("UMLRecognizer JNI (Win32/x86) starting");
 
 	    	/**
 	    	 * Iterate through the list of libraries and remove all libraries from the list
@@ -55,9 +55,10 @@ public class UMLRecognizerJNI {
 	    		}
 	    		i--;
 	    	}
+
 	    } catch (UnsatisfiedLinkError e) {
-	      System.err.println("Native code library failed to load. \n" + e); //$NON-NLS-1$
-	      throw new MissingRecognizerNativeException("Native code library failed to load", e);
+	    	System.err.println("Native code library failed to load. \n" + e); //$NON-NLS-1$
+	    	throw new MissingRecognizerNativeException("Native code library failed to load", e);
 	    }
     }
 

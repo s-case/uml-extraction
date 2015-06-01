@@ -16,15 +16,15 @@ public class UMLRecognizerJNI {
 	    try {
 	    	ArrayList<String> list = new ArrayList<String>();
 	    	
-	    	list.add("liblept168"); //$NON-NLS-1$
-	    	list.add("libtesseract302"); //$NON-NLS-1$
-	    	list.add("opencv_core242"); //$NON-NLS-1$
-	    	list.add("opencv_highgui242"); //$NON-NLS-1$
-	    	list.add("opencv_imgproc242"); //$NON-NLS-1$
+	    	list.add("liblept171"); //$NON-NLS-1$
+	    	list.add("libtesseract304"); //$NON-NLS-1$
+	    	list.add("opencv_core249"); //$NON-NLS-1$
+	    	list.add("opencv_highgui249"); //$NON-NLS-1$
+	    	list.add("opencv_imgproc249"); //$NON-NLS-1$
 	  
 	    	list.add("UMLrecogn"); //$NON-NLS-1$
 
-	    	System.out.println("UMLRecognizer JNI (Linux/x64) starting");
+	    	System.out.println("UMLRecognizer JNI (Win32/x64) starting");
 
 	    	/**
 	    	 * Iterate through the list of libraries and remove all libraries from the list
