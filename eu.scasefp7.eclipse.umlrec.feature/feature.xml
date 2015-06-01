@@ -5,7 +5,7 @@
       version="1.0.0.qualifier"
       provider-name="S-CASE Consortium"
       plugin="eu.scasefp7.eclipse.umlrec.ui"
-      os="win32"
+      os="linux,win32"
       arch="x86,x86_64">
 
    <description url="https://github.com/s-case/uml-extraction">
@@ -238,9 +238,9 @@
          unpack="false"/>
 
    <plugin
-         id="eu.scasefp7.eclipse.umlrec.win32.x86"
-         os="win32"
-         arch="x86"
+         id="eu.scasefp7.eclipse.umlrec.linux.x64"
+         os="linux"
+         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -249,8 +249,17 @@
 
    <plugin
          id="eu.scasefp7.eclipse.umlrec.win32.x64"
-         os="win32"
          arch="x86_64"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="eu.scasefp7.eclipse.umlrec.win32.x86"
+         os="win32"
+         arch="x86"
          download-size="0"
          install-size="0"
          version="0.0.0"
