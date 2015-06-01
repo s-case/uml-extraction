@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import eu.scasefp7.eclipse.umlrec.MissingRecognizerDataException;
+import eu.scasefp7.eclipse.umlrec.MissingRecognizerNativeException;
 import eu.scasefp7.eclipse.umlrec.RecognitionException;
 import eu.scasefp7.eclipse.umlrec.ui.wizard.Messages;
 import eu.scasefp7.eclipse.umlrec.ui.wizard.MyWizard;
@@ -50,27 +51,39 @@ public class UMLrecognizerJob extends WorkspaceJob {
 
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask(null, 10);
-		UMLRecognizer uml = new UMLRecognizer();
-		uml.setParameters(this.isUseCase, this.showImages, this.threshold, this.sizeRate, this.distNeighborObjects, this.coverAreaThreshold);
-
 		
 		ILog log = Platform.getLog( Platform.getBundle(MyWizard.PLUGIN_ID));
-		log.log(new Status(IStatus.INFO, MyWizard.PLUGIN_ID, "Starting uml recognition...")); //$NON-NLS-1$
+		monitor.beginTask(null, 10);
+		
+		UMLRecognizer uml;
+		try {
+			uml = new UMLRecognizer();
+		} catch (MissingRecognizerNativeException mrne) {
+			mrne.printStackTrace();
+			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, Messages.UMLrecognizerJob_JNIFail));
+			return Status.CANCEL_STATUS;
+		} finally {
+			monitor.done();
+		}
+		
+		uml.setParameters(this.isUseCase, this.showImages, this.threshold, this.sizeRate, this.distNeighborObjects, this.coverAreaThreshold);
+
+		log.log(new Status(IStatus.INFO, MyWizard.PLUGIN_ID, Messages.UMLrecognizerJob_RecognStart));
 		
 		monitor.subTask(Messages.UMLrecognizerJob_SetImageDescription);
 		
 		try {
 			uml.setImage(srcFilePath);
-		} catch (RecognitionException e1) {
-			e1.printStackTrace();
-			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, "Image recognition failed", e1));
+		} catch (RecognitionException re) {
+			re.printStackTrace();
+			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, Messages.UMLrecognizerJob_RecognitionFail, re));
 			return Status.OK_STATUS;
 		} catch(Exception e){
 			e.printStackTrace();
-			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, "Image recognition failed", e));
+			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, Messages.UMLrecognizerJob_RecognitionFailGeneral, e));
 			return Status.OK_STATUS;
-			
+		} finally {
+			monitor.done();
 		}
 		
 		monitor.worked(2);
@@ -78,9 +91,9 @@ public class UMLrecognizerJob extends WorkspaceJob {
 
 		try {
 			uml.process();
-		} catch (MissingRecognizerDataException | RecognitionException e1) {
-			e1.printStackTrace();
-			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, e1.getMessage()));
+		} catch (MissingRecognizerDataException | RecognitionException mrde) {
+			mrde.printStackTrace();
+			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, mrde.getMessage()));
 			return Status.OK_STATUS;
 		} catch(Exception e){
 			e.printStackTrace();

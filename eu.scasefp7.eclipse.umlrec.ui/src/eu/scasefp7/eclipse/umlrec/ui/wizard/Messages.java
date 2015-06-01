@@ -5,6 +5,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "eu.scasefp7.eclipse.umlrec.ui.wizard.messages"; //$NON-NLS-1$
 	public static String PageOne_DiagramTypeLabel;
+	public static String FileEditorJob_EditorOpenFailed;
 	public static String FileEditorJobDescription;
 	public static String FilterExtensionName;
 	public static String MyWizard;
@@ -32,7 +33,11 @@ public class Messages extends NLS {
 	public static String PageTwo_Title;
 	
 	public static String UMLrecognizerJob_GetXMIContentDescription;
+	public static String UMLrecognizerJob_JNIFail;
 	public static String UMLrecognizerJob_ProcessDescription;
+	public static String UMLrecognizerJob_RecognitionFail;
+	public static String UMLrecognizerJob_RecognitionFailGeneral;
+	public static String UMLrecognizerJob_RecognStart;
 	public static String UMLrecognizerJob_SetImageDescription;
 	public static String UMLrecognizerJob_UMLrecognizerJobName;
 	

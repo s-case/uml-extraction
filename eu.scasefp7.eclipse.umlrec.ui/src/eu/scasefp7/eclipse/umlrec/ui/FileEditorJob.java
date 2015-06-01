@@ -45,7 +45,7 @@ public class FileEditorJob extends WorkbenchJob {
 	    try {
 	        IDE.openEditorOnFileStore( page, fileStore );
 	    } catch ( PartInitException e ) {
-	        log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, "Editor failed to open on file", e)); //$NON-NLS-1$
+	        log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, Messages.FileEditorJob_EditorOpenFailed, e)); 
 	    }
 		
 		return Status.OK_STATUS;
