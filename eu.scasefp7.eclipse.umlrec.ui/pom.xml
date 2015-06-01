@@ -11,4 +11,12 @@
   <artifactId>eu.scasefp7.eclipse.umlrec.ui</artifactId>
   <packaging>eclipse-plugin</packaging>
 
+  <dependencies>
+  	<dependency>
+  		<groupId>eu.scasefp7.eclipse</groupId>
+  		<artifactId>eu.scasefp7.eclipse.umlrec</artifactId>
+  		<version>1.0.0-SNAPSHOT</version>
+  		<type>eclipse-plugin</type>
+  	</dependency>
+  </dependencies>
 </project>
