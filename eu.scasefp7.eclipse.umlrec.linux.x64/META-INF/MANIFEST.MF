@@ -7,3 +7,4 @@ Bundle-Vendor: %Bundle-Vendor
 Fragment-Host: eu.scasefp7.eclipse.umlrec;bundle-version="1.0.0.qualifier"
 Eclipse-PlatformFilter: (& (osgi.os=linux) (osgi.arch=x64))
 Bundle-Localization: OSGI-INF/l10n/bundle.linux.x64
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

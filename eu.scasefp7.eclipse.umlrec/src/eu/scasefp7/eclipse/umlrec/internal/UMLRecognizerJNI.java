@@ -7,8 +7,6 @@
  * ----------------------------------------------------------------------------- */
 
 package eu.scasefp7.eclipse.umlrec.internal;
-import java.util.ArrayList;
-
 import eu.scasefp7.eclipse.umlrec.MissingRecognizerNativeException;
 
 public class UMLRecognizerJNI {

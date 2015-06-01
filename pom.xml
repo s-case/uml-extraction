@@ -8,10 +8,11 @@
   <modules>
     <module>eu.scasefp7.eclipse.umlrec</module>
     <module>eu.scasefp7.eclipse.umlrec.ui</module>
-    <module>eu.scasefp7.eclipse.umlrec.feature</module>
     <module>eu.scasefp7.eclipse.umlrec.linux.x64</module>
     <module>eu.scasefp7.eclipse.umlrec.win32.x64</module>
     <module>eu.scasefp7.eclipse.umlrec.win32.x86</module>
+    <module>eu.scasefp7.eclipse.umlrec.feature</module>
+    <module>update-site</module>
   </modules>
 
   <properties>
