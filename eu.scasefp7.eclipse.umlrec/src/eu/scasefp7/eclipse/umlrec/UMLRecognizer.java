@@ -21,6 +21,9 @@ public class UMLRecognizer {
 	/** Store the image file name */
 	protected String _fileName = null;
 	
+	/** Store the tesseract recognizer files */
+	protected String _tessData = null;
+	
 	public static final boolean SHOW_IMAGES=false;
 	public static final int THRESH=230;
 	public static final double SIZE_RATE=1.0;
@@ -30,7 +33,7 @@ public class UMLRecognizer {
 	/**
 	 * 
 	 */
-	public UMLRecognizer() {
+	public UMLRecognizer() throws MissingRecognizerNativeException {
 		this._umlRec = new UMLrecog();
 		
 		Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
@@ -40,7 +43,8 @@ public class UMLRecognizer {
 			URL fileUrl = FileLocator.toFileURL(url);
 			Path fullPath = new Path(fileUrl.getPath());
 			System.out.println(fullPath.toOSString());
-			this._umlRec.setTessPath(fullPath.removeTrailingSeparator().toOSString());
+			this._tessData = fullPath.removeTrailingSeparator().toOSString();
+			this._umlRec.setTessPath(this._tessData);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
