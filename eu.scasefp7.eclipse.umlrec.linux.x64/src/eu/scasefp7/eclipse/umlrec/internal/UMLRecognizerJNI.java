@@ -16,11 +16,11 @@ public class UMLRecognizerJNI {
 	    try {
 	    	ArrayList<String> list = new ArrayList<String>();
 	    	
-	    	list.add("liblept168"); //$NON-NLS-1$
-	    	list.add("libtesseract302"); //$NON-NLS-1$
-	    	list.add("opencv_core242"); //$NON-NLS-1$
-	    	list.add("opencv_highgui242"); //$NON-NLS-1$
-	    	list.add("opencv_imgproc242"); //$NON-NLS-1$
+	    	list.add("lept"); //$NON-NLS-1$
+	    	list.add("tesseract"); //$NON-NLS-1$
+	    	list.add("opencv_core"); //$NON-NLS-1$
+	    	list.add("opencv_highgui"); //$NON-NLS-1$
+	    	list.add("opencv_imgproc"); //$NON-NLS-1$
 	  
 	    	list.add("UMLrecogn"); //$NON-NLS-1$
 
