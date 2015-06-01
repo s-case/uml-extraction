@@ -238,9 +238,10 @@
          unpack="false"/>
 
    <plugin
-         id="eu.scasefp7.eclipse.umlrec.linux.x64"
-         os="linux"
-         arch="x86_64"
+         id="eu.scasefp7.eclipse.umlrec.win32.x86"
+         os="win32"
+         ws="win32"
+         arch="x86"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -249,6 +250,8 @@
 
    <plugin
          id="eu.scasefp7.eclipse.umlrec.win32.x64"
+         os="win32"
+         ws="win32"
          arch="x86_64"
          download-size="0"
          install-size="0"
@@ -257,9 +260,10 @@
          unpack="false"/>
 
    <plugin
-         id="eu.scasefp7.eclipse.umlrec.win32.x86"
-         os="win32"
-         arch="x86"
+         id="eu.scasefp7.eclipse.umlrec.linux.x64"
+         os="linux"
+         ws="gtk"
+         arch="x86_64"
          download-size="0"
          install-size="0"
          version="0.0.0"
