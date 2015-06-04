@@ -7,16 +7,62 @@
  * ----------------------------------------------------------------------------- */
 
 package eu.scasefp7.eclipse.umlrec.internal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import eu.scasefp7.eclipse.umlrec.MissingRecognizerNativeException;
 
 public class UMLRecognizerJNI {
 
     static {
-    	// Ignore compiler warnings about not completing the initializer
-    	if(true) {
-    		throw new MissingRecognizerNativeException("Fragment with native libraries not loaded");
-    	}
-    }
+		try {
+			/* Prepare the list of libraries to load from properties file */
+			String librariesList = Libraries.UMLRecognizerJNI_LibrariesList;
+			String librariesToLoad[] = librariesList.split(Libraries.UMLRecognizerJNI_Separator);
+			List<String> list = new ArrayList<String>(Arrays.asList(librariesToLoad));
+
+			System.out.println("UMLRecognizer JNI starting"); //$NON-NLS-1$
+
+			/**
+			 * Iterate through the list of libraries and remove all libraries
+			 * from the list that could be loaded. Repeat this step until all
+			 * libraries are loaded. The Reason: You can only load a library, if
+			 * all dependent libraries have already been loaded. So you need to
+			 * know the correct ordering from the leafs to the root. Load the
+			 * leafs first!
+			 */
+			ArrayList<String> toRemove;
+			int i = 10; // cancel after 10 iterations. You probably forgot to
+						// mention a library to load.
+			while (!list.isEmpty() && (i > 0)) {
+				toRemove = new ArrayList<String>();
+				int j = 0;
+				while (j <= list.size() - 1) {
+					try {
+						System.loadLibrary(list.get(j));
+						toRemove.add(list.get(j));
+						System.out
+								.println("loaded library " + j + ": " + list.get(j)); //$NON-NLS-1$ //$NON-NLS-2$
+					} catch (Throwable e) {
+						System.out.println(e.getMessage());
+						System.out.println("error loading lib: " + list.get(j)); //$NON-NLS-1$
+					}
+					j++;
+				}
+				for (String lib : toRemove) {
+					System.out.println("removing lib : " + lib); //$NON-NLS-1$
+					list.remove(lib);
+				}
+				i--;
+			}
+
+		} catch (UnsatisfiedLinkError e) {
+			System.err.println("Native code library failed to load. \n" + e); //$NON-NLS-1$
+			throw new MissingRecognizerNativeException(
+					"Native code library failed to load", e); //$NON-NLS-1$
+		}
+	}
 
     public final static native long new_StringList__SWIG_0();
     public final static native long new_StringList__SWIG_1(long jarg1);
