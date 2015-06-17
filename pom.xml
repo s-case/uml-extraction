@@ -15,6 +15,12 @@
 
 	<developers>
 		<developer>
+			<name>Konstantinos Giannoutakis</name>
+			<email>kgiannou@iti.gr</email>
+			<organization>Information Technologies Institute</organization>
+			<organizationUrl>http://www.iti.gr/</organizationUrl>
+		</developer>
+		<developer>
 			<name>Marin Orlic</name>
 			<email>marin.orlic@ericsson.com</email>
 			<organization>Ericsson Nikola Tesla d.d.</organization>
