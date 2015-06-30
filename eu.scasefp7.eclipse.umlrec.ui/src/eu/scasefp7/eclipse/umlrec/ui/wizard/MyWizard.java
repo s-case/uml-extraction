@@ -1,6 +1,5 @@
 package eu.scasefp7.eclipse.umlrec.ui.wizard;
 
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.IStructuredSelection;

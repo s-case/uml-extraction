@@ -1,7 +1,5 @@
 package eu.scasefp7.eclipse.umlrec.ui;
 
-
-
 import java.io.File;
 
 import org.eclipse.core.filesystem.EFS;
