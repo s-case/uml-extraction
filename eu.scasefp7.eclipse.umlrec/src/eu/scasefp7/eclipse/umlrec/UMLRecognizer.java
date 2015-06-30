@@ -73,11 +73,11 @@ public class UMLRecognizer {
 		int result = this._umlRec.process();
 
 		if(result == -2) {
-			throw new MissingRecognizerDataException("Missing tessdata files or text analysis failed");
+			throw new MissingRecognizerDataException("Missing tessdata files or text analysis failed"); //$NON-NLS-1$
 		}
 		
 		if(result == -1) {
-			throw new RecognitionException("Unknow recognition error"); //$NON-NLS-1$
+			throw new RecognitionException("Unknown recognition error"); //$NON-NLS-1$
 		}
 			
 		return;
