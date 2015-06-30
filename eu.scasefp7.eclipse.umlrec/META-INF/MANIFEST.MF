@@ -9,5 +9,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: eu.scasefp7.eclipse.umlrec
+Export-Package: eu.scasefp7.eclipse.umlrec;version="1.0.0"
 Eclipse-BundleShape: dir
