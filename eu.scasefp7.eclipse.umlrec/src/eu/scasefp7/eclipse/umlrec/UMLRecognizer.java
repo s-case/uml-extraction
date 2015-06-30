@@ -55,7 +55,7 @@ public class UMLRecognizer {
 	}
 	
 	public void setImage(String fileName) throws RecognitionException {
-		// The “setImage” function returns true if it succeeded to load the image, otherwise false.
+		// The setImage function returns true if it succeeded to load the image, otherwise false.
 		this._fileName = fileName;
 		boolean res = this._umlRec.setImage(fileName);
 		
@@ -67,7 +67,7 @@ public class UMLRecognizer {
 	public void process() throws MissingRecognizerDataException, RecognitionException {
 		// The process function returns 
 		// 	0 for a successful run, 
-		//	-2 if “TessData files are missing OR the program failed to analyse the text of the diagram” and 
+		//	-2 if TessData files are missing OR the program failed to analyse the text of the diagram and 
 		// 	-1 if an unknown error occurred.
 		
 		int result = this._umlRec.process();

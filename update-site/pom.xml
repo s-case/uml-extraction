@@ -11,6 +11,10 @@
   <artifactId>update-site</artifactId>
   <packaging>eclipse-repository</packaging>
 
+  <properties>
+      <source.skip>true</source.skip>
+  </properties>
+
   <dependencies>
   	<dependency>
   		<groupId>eu.scasefp7.eclipse</groupId>
