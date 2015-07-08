@@ -58,8 +58,8 @@ public class PageOne extends WizardPage {
 	 * 
 	 * @param parent
 	 */
-	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
+	public void createControl(final Composite parent) {
+		final Composite container = new Composite(parent, SWT.NULL);
 
 		GridLayout layout = new GridLayout();
 		container.setLayout(layout);

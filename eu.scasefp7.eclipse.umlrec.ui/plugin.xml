@@ -4,15 +4,18 @@
    <extension
          point="org.eclipse.ui.importWizards">
       <category
-            id="eu.scasefp7.eclipse.category"
-            name="%category.name">
+            id="UMLRec"
+            name="UML Extractor">
       </category>
       <wizard
-            category="eu.scasefp7.eclipse.category"
+            category="UMLRec"
             class="eu.scasefp7.eclipse.umlrec.ui.wizard.MyWizard"
             icon="images/s-case.png"
             id="eu.scasefp7.eclipse.umlrec.importWizard"
-            name="%wizard.name">
+            name="Import UML diagram from image">
+         <description>
+            Import a UML diagram from image format
+         </description>
       </wizard>
    </extension>
 </plugin>
