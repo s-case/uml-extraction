@@ -42,7 +42,7 @@
 		<module>eu.scasefp7.eclipse.umlrec.win32.x64</module>
 		<module>eu.scasefp7.eclipse.umlrec.win32.x86</module>
 		<module>eu.scasefp7.eclipse.umlrec.feature</module>
-		<module>update-site</module>
+		<module>eu.scasefp7.eclipse.umlrec.update-site</module>
 	</modules>
 
 	<properties>
