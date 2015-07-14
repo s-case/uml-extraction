@@ -9,4 +9,4 @@ X-Comment-To-Fragment-Host: version range is meant to be 1.0.0.qualifier
 Fragment-Host: eu.scasefp7.eclipse.umlrec;bundle-version="[1.0.0,2.0.0)"
 Eclipse-PlatformFilter: (& (osgi.os=win32) (osgi.arch=x86))
 Bundle-Localization: OSGI-INF/l10n/bundle.win32.x86
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
