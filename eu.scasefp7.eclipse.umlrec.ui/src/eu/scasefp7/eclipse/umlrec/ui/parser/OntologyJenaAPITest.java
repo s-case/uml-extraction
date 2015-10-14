@@ -68,7 +68,8 @@ public class OntologyJenaAPITest {
 			ontology.connectActivityDiagramToTransition(diagramName, edge.getSourceNode().getName(),edge.getTargetNode().getName());
 			if (edge.getCondition() != null) {
 				ontology.addConditionToTransition(edge.getCondition(), edge.getSourceNode().getName() , edge.getTargetNode().getName());
-				ontology.connectActivityDiagramToElement(diagramName, edge.getCondition());
+				//not needed
+				//ontology.connectActivityDiagramToElement(diagramName, edge.getCondition());
 			}
 		}
 
