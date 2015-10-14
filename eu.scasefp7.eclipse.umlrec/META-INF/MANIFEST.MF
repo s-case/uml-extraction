@@ -6,7 +6,9 @@ Bundle-SymbolicName: eu.scasefp7.eclipse.umlrec
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: eu.scasefp7.eclipse.umlrec.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources;bundle-version="3.10.0",
+ eu.scasefp7.eclipse.core;bundle-version="1.0.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: eu.scasefp7.eclipse.umlrec;version="1.0.0"
