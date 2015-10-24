@@ -64,6 +64,19 @@
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>OSSRH releases</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+		</repository>
+		<repository>
+			<id>s-case-dev</id>
+			<layout>p2</layout>
+			<url>http://s-case.github.io/s-case_dev_site/</url>
+		</repository>
 	</repositories>
 
 	<build>
