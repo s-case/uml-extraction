@@ -67,7 +67,7 @@ public class UseCaseParser {
 				connectedDashed = substring(connectedDashedString, connectedDashed);
 
 				XMIUseCaseNode node = new XMIUseCaseNode(eElement.getAttribute("xmi:type"), eElement.getAttribute("xmi:id"),
-						eElement.getAttribute("name"), incomingSolid, outgoingSolid, incomingDashed, outgoingDashed,
+						eElement.getAttribute("name"), eElement.getAttribute("annotations"), incomingSolid, outgoingSolid, incomingDashed, outgoingDashed,
 						connectedSolid, connectedDashed);
 				System.out.println("\nCurrent Element :" + node.getName() + ", type: " + node.getType());
 				nodes.add(node);
@@ -75,16 +75,16 @@ public class UseCaseParser {
 		}
 		System.out.println("\nFinish!");
 
-//		for (XMIEdge e : edges) {
-//			for (XMIUseCaseNode n : nodes) {
-//				if (e.getSource().equals(n.getId())) {
-//					e.setSource(n.getName());
-//				}
-//				if (e.getTarget().equals(n.getId())) {
-//					e.setTarget(n.getName());
-//				}
-//			}
-//		}
+		for (XMIEdge e : edges) {
+			for (XMIUseCaseNode n : nodes) {
+				if (e.getSource().equals(n.getId())) {
+					e.setSourceNode(n);
+				}
+				if (e.getTarget().equals(n.getId())) {
+					e.setTargetNode(n);
+				}
+			}
+		}
 
 	}
 
@@ -111,7 +111,7 @@ public class UseCaseParser {
 			if (s.charAt(i) == '_') {
 				counter++;
 				if (counter > 1 && previousOccurance < i) {
-					list.add(s.substring(previousOccurance, i));
+					list.add(s.substring(previousOccurance, i - 1));
 				}
 				previousOccurance = i;
 			}
@@ -119,6 +119,18 @@ public class UseCaseParser {
 		list.add(s.substring(previousOccurance, s.length()));
 
 		return list;
+	}
+	
+	public boolean checkParsedXmi() {
+		boolean xmiIsOk = true;
+		boolean edgesOk = true;
+		for (XMIEdge edge:edges){
+			if (edge.getSource().isEmpty() || edge.getTarget().isEmpty()){
+				edgesOk=false;
+			}
+		}
+		xmiIsOk=edgesOk;
+		return xmiIsOk;
 	}
 	
 	/**

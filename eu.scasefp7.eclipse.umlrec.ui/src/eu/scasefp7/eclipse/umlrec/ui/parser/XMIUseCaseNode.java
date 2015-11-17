@@ -12,6 +12,7 @@ public class XMIUseCaseNode {
 	private ArrayList<String> outgoingDashed = new ArrayList<String>();
 	private ArrayList<String> connectedSolid = new ArrayList<String>();
 	private ArrayList<String> connectedDashed = new ArrayList<String>();
+	private String annotations;
 
 	public XMIUseCaseNode() {
 		this.type = "";
@@ -19,12 +20,13 @@ public class XMIUseCaseNode {
 		this.name = "";
 	}
 
-	public XMIUseCaseNode(String type, String id, String name, ArrayList<String> incomingSolid,
+	public XMIUseCaseNode(String type, String id, String name, String annotations, ArrayList<String> incomingSolid,
 			ArrayList<String> outgoingSolid, ArrayList<String> incomingDashed, ArrayList<String> outgoingDashed,
 			ArrayList<String> connectedSolid, ArrayList<String> connectedDashed) {
 		this.type = type;
 		this.id = id;
 		this.name = name;
+		this.annotations = annotations;
 		this.incomingSolid = incomingSolid;
 		this.outgoingSolid = outgoingSolid;
 		this.incomingDashed = incomingDashed;
@@ -64,6 +66,10 @@ public class XMIUseCaseNode {
 
 	public ArrayList<String> getconnectedDashedNode() {
 		return this.connectedDashed;
+	}
+	
+	public String getannotations() {
+		return this.annotations;
 	}
 
 	public String getId() {
@@ -106,6 +112,11 @@ public class XMIUseCaseNode {
 	public void setconnectedDashedNode(String connectedDashed) {
 
 		this.connectedDashed.add(connectedDashed);
+	}
+	
+	public void setannotations(String annotation) {
+
+		this.annotations=annotation;
 	}
 
 	public void setId(String id) {

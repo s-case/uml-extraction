@@ -10,8 +10,8 @@ public class XMIEdge {
 	private String name;
 	private String target;
 	private String source;
-	private XMIActivityNode targetNode;
-	private XMIActivityNode sourceNode;
+	private Object targetNode;
+	private Object sourceNode;
 	private String id;
 	private String type;
 	private String condition;
@@ -46,11 +46,11 @@ public class XMIEdge {
 	public String getSource() {
 		return this.source;
 	}
-	public XMIActivityNode getTargetNode() {
+	public Object getTargetNode() {
 		return this.targetNode;
 	}
 
-	public XMIActivityNode getSourceNode() {
+	public Object getSourceNode() {
 		return this.sourceNode;
 	}
 
@@ -69,11 +69,11 @@ public class XMIEdge {
 		this.name = name;
 	}
 
-	public void setTargetNode(XMIActivityNode target) {
+	public void setTargetNode(Object target) {
 		this.targetNode = target;
 	}
 
-	public void setSourceNode(XMIActivityNode source) {
+	public void setSourceNode(Object source) {
 		this.sourceNode = source;
 	}
 

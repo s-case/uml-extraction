@@ -25,13 +25,14 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import eu.scasefp7.eclipse.core.ontology.DynamicOntologyAPI;
+import eu.scasefp7.eclipse.core.ontology.StaticOntologyAPI;
 import eu.scasefp7.eclipse.umlrec.ui.parser.*;
 
 
 /**
- * A command handler for exporting a storyboard diagram to the dynamic ontology.
+ * A command handler for exporting a uml diagram to the dynamic or static ontology.
  * 
- * @author themis
+ * @author mkoutli
  */
 public class ExportToOntologyHandler extends AbstractHandler {
 
@@ -71,11 +72,7 @@ public class ExportToOntologyHandler extends AbstractHandler {
 	 */
 	private void instantiateOntology(IFile file) {
 		try {
-			DynamicOntologyAPI ontology = new DynamicOntologyAPI(file.getProject());
-			String filename = file.getName();
-			String diagramName = filename.substring(0, filename.lastIndexOf('.'));
-			diagramName = diagramName.substring(diagramName.lastIndexOf('\\') + 1) + "_diagram";
-			ontology.addActivityDiagram(diagramName);
+			
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder;
 			docBuilder = docFactory.newDocumentBuilder();
@@ -92,6 +89,11 @@ public class ExportToOntologyHandler extends AbstractHandler {
 				String type = eElement.getAttribute("xmi:type");
 				boolean xmiIsOk = false;
 				if (type.equalsIgnoreCase("uml:Activity")) {
+					DynamicOntologyAPI ontology = new DynamicOntologyAPI(file.getProject());
+					String filename = file.getName();
+					String diagramName = filename.substring(0, filename.lastIndexOf('.'));
+					diagramName = diagramName.substring(diagramName.lastIndexOf('\\') + 1) + "_ACdiagram";
+					ontology.addActivityDiagram(diagramName);
 					ActivityParser parser = new ActivityParser();
 					parser.Parsexmi(doc);
 					ArrayList<XMIEdge> edgesWithCondition = parser.getEdgesWithCondition();
@@ -100,128 +102,32 @@ public class ExportToOntologyHandler extends AbstractHandler {
 					ArrayList<XMIActivityNode> nodes = parser.getNodes();
 					xmiIsOk = parser.checkParsedXmi();
 					if (xmiIsOk) {
-						OntologyJenaAPITest.modifyOntology(edgesWithCondition, edgesWithoutCondition, edges, nodes, ontology, diagramName);
+						WriteDynamicOntology.modifyOntology(edgesWithCondition, edgesWithoutCondition, edges, nodes, ontology, diagramName);
 					}
 				} else if (type.equalsIgnoreCase("uml:Use Case")) {
+					StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject(), true);
+					String filename = file.getName();
+					String diagramName = filename.substring(0, filename.lastIndexOf('.'));
+					diagramName = diagramName.substring(diagramName.lastIndexOf('\\') + 1) + "_UCdiagram";
+					ontology.addRequirement(diagramName);
 					UseCaseParser parser = new UseCaseParser();
 					parser.Parsexmi(doc);
 					ArrayList<XMIEdge> edges = parser.getEdges();
 					ArrayList<XMIUseCaseNode> nodes = parser.getNodes();
+					WriteStaticOntology.modifyOntology(edges, nodes, ontology, diagramName);
 
 				}
 			}
-//			Document dom = db.parse(file.getContents());
-//			Element doc = dom.getDocumentElement();
-//			doc.normalize();
-//			Node root = doc.getElementsByTagName("auth.storyboards:StoryboardDiagram").item(0);
-//			sbdToOwl(diagramName, ontology, root);
-//			ontology.close();
+
 		} catch (ParserConfigurationException | SAXException | IOException | CoreException e) {
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * Transfers an sbd file in the dynamic ontology.
-	 * 
-	 * @param diagramName the name of the diagram.
-	 * @param ontology the ontology instance.
-	 * @param root the root node of the sbd diagram model.
-	 */
-	private void sbdToOwl(String diagramName, DynamicOntologyAPI ontology, Node root) {
 
-//		HashMap<String, SBDNode> ids = new HashMap<String, SBDNode>();
-//
-//		NodeList nodes = root.getChildNodes();
-//		for (int i = 0; i < nodes.getLength(); i++) {
-//			Node node = nodes.item(i);
-//			SBDNode sbdnode = new SBDNode(node);
-//
-//			if (sbdnode.getType() != null) {
-//				// Iterate over all nodes
-//				if (sbdnode.getType().equals("action")) {
-//					// Add an action node as an activity
-//					ontology.addActivity(sbdnode.getName());
-//					ontology.connectActivityDiagramToElement(diagramName, sbdnode.getName());
-//					String[] actionAndObject = getActionAndObject(sbdnode.getName());
-//					String action = actionAndObject[0];
-//					String object1 = actionAndObject[1];
-//					ontology.addActionToActivity(sbdnode.getName(), action);
-//					ontology.addObjectToActivity(sbdnode.getName(), object1);
-//					// String actiontype = sbdnode.get("type") == null ? "create" : sbdnode.get("type");
-//					// ontology.addActivityTypeToActivity(sbdnode.getName(), actiontype);
-//				} else if (sbdnode.getType().equals("startnode")) {
-//					// Add the start node
-//					ontology.addInitialActivity("StartNode");
-//					ontology.connectActivityDiagramToElement(diagramName, "StartNode");
-//					if (sbdnode.getPrecondition() != null) {
-//						ontology.addPreconditionToDiagram(diagramName, sbdnode.getPrecondition());
-//					}
-//				} else if (sbdnode.getType().equals("endnode")) {
-//					// Add the end node
-//					ontology.addFinalActivity("EndNode");
-//					ontology.connectActivityDiagramToElement(diagramName, "EndNode");
-//				} else if (sbdnode.getType().equals("storyboard")) {
-//					// Add a storyboard node as an activity
-//					ontology.addActivity(sbdnode.getName());
-//					ontology.connectActivityDiagramToElement(diagramName, sbdnode.getName());
-//				}
-//				ids.put(sbdnode.getId(), sbdnode);
-//			}
-//		}
-//
-//		for (SBDNode sbdnode : ids.values()) {
-//			if (sbdnode.getType().equals("action")) {
-//				// Add the properties of the action
-//				ArrayList<String> propertyIds = sbdnode.getProperties();
-//				for (String propertyId : propertyIds) {
-//					SBDNode property = ids.get(propertyId);
-//					ontology.addPropertyToActivity(sbdnode.getName(), property.getName());
-//				}
-//			}
-//			if (sbdnode.getType().equals("action") || sbdnode.getType().equals("storyboard")
-//					|| sbdnode.getType().equals("startnode")) {
-//				// Add the transitions in the case of conditions
-//				String nextNodeId = sbdnode.getNextNode();
-//				String from = sbdnode.getName();
-//				SBDNode nextNode = ids.get(nextNodeId);
-//				if (nextNode.getType().equals("condition")) {
-//					ArrayList<SBDNode> conditionPaths = nextNode.getChildren();
-//
-//					SBDNode actionOfConditionPath0 = ids.get(conditionPaths.get(0).getNextNode());
-//					SBDNode actionOfConditionPath1 = ids.get(conditionPaths.get(1).getNextNode());
-//
-//					ontology.addTransition(from, actionOfConditionPath0.getName());
-//					ontology.connectActivityDiagramToTransition(diagramName, from, actionOfConditionPath0.getName());
-//					ontology.addConditionToTransition(conditionPaths.get(0).getName(), from,
-//							actionOfConditionPath0.getName());
-//
-//					ontology.addTransition(from, actionOfConditionPath1.getName());
-//					ontology.connectActivityDiagramToTransition(diagramName, from, actionOfConditionPath1.getName());
-//					ontology.addConditionToTransition(conditionPaths.get(1).getName(), from,
-//							actionOfConditionPath1.getName());
-//				} else {
-//					// Add the transitions
-//					ontology.addTransition(from, nextNode.getName());
-//					ontology.connectActivityDiagramToTransition(diagramName, from, nextNode.getName());
-//				}
-//			}
-//		}
-	}
 
-	/**
-	 * Extracts the action and the object of an activity.
-	 * 
-	 * @param activity the activity to be split.
-	 * @return a string array including the action in the first position and the object in the second.
-	 */
-	private static String[] getActionAndObject(String activity) {
-		String[] actobj = new String[2];
-		String[] tempactobj = activity.split("\\s+");
-		actobj[0] = tempactobj[0];
-		actobj[1] = tempactobj[tempactobj.length - 1];
-		return actobj;
-	}
+	
+
 
 }
 

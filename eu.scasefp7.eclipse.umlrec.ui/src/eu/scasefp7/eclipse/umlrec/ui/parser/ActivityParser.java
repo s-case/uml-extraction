@@ -57,7 +57,8 @@ public class ActivityParser {
 				outgoing = substring(outgoingString, outgoing);
 
 				XMIActivityNode node = new XMIActivityNode(eElement.getAttribute("xmi:type"),
-						eElement.getAttribute("xmi:id"), eElement.getAttribute("name"), incoming, outgoing);
+						eElement.getAttribute("xmi:id"), eElement.getAttribute("name"), eElement.getAttribute("annotations"), incoming, outgoing);
+				
 				System.out.println("\nCurrent Element :" + node.getName() + ", type: " + node.getType());
 				nodes.add(node);
 			}
@@ -258,6 +259,13 @@ public class ActivityParser {
 		boolean actionNodesOk = true;
 		boolean joinNodesOk = true;
 		boolean forkNodesOk = true;
+		boolean edgesOk = true;
+		
+		for (XMIEdge edge:edges){
+			if (edge.getSource().isEmpty() || edge.getTarget().isEmpty()){
+				edgesOk=false;
+			}
+		}
 		for (XMIActivityNode n : nodes) {
 			if (n.getType().equals("uml:DecisionNode")) {
 				for (int i = 0; i < n.getIncoming().size(); i++) {
@@ -305,7 +313,7 @@ public class ActivityParser {
 			}
 
 		}
-		xmiIsOk = actionNodesOk && finalNodeOk && initialNodeOk && decisionNodesOk && joinNodesOk && forkNodesOk;
+		xmiIsOk = actionNodesOk && finalNodeOk && initialNodeOk && decisionNodesOk && joinNodesOk && forkNodesOk && edgesOk;
 		return xmiIsOk;
 	}
 

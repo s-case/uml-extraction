@@ -13,6 +13,7 @@ public class XMIActivityNode {
 	private String type;
 	private String id;
 	private String name;
+	private String annotations;
 	private ArrayList<String> incoming = new ArrayList<String>();
 	private ArrayList<String> outgoing = new ArrayList<String>();
 	private ArrayList<XMIActivityNode> sourceNodes= new ArrayList<XMIActivityNode>();
@@ -24,10 +25,11 @@ public class XMIActivityNode {
 		this.name = "";
 	}
 
-	public XMIActivityNode(String type, String id, String name, ArrayList<String> incoming, ArrayList<String> outgoing) {
+	public XMIActivityNode(String type, String id, String name, String annotations, ArrayList<String> incoming, ArrayList<String> outgoing) {
 		this.type = type;
 		this.id = id;
 		this.name = name;
+		this.annotations = annotations;
 		this.incoming = incoming;
 		this.outgoing = outgoing;
 	}
@@ -40,6 +42,9 @@ public class XMIActivityNode {
 	public String getType() {
 		return this.type;
 	}
+	 public String getAnnotations(){
+		 return this.annotations;
+	 }
 
 	public ArrayList<String> getIncoming() {
 		return this.incoming;
@@ -66,6 +71,10 @@ public class XMIActivityNode {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public void setAnnotations(String annotations) {
+		this.annotations = annotations;
 	}
 
 	public void setIncoming(String oldValue, String newValue) {
