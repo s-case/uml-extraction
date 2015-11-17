@@ -94,9 +94,9 @@ public class WriteStaticOntology {
 									String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(
 											connectedNode.getName(), connectedNode.getannotations());
 									String object2 = actionAndObject2[1];
-									if (edge.getName().equalsIgnoreCase("extends")) {
+									if (edge.getName().equalsIgnoreCase("extend")) {
 										ontology.connectObjectToObject(object1, object2);
-									} else if (edge.getName().equalsIgnoreCase("includes")) {
+									} else if (edge.getName().equalsIgnoreCase("include")) {
 										ontology.connectObjectToObject(object2, object1);
 									}
 								}

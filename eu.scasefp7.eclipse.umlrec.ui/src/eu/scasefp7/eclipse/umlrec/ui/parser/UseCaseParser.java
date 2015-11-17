@@ -2,6 +2,8 @@ package eu.scasefp7.eclipse.umlrec.ui.parser;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -122,14 +124,41 @@ public class UseCaseParser {
 	}
 	
 	public boolean checkParsedXmi() {
+		final Display disp = Display.getCurrent();
 		boolean xmiIsOk = true;
 		boolean edgesOk = true;
+		boolean annotationsOk = true;
 		for (XMIEdge edge:edges){
 			if (edge.getSource().isEmpty() || edge.getTarget().isEmpty()){
 				edgesOk=false;
+				
+				disp.syncExec(new Runnable() {
+					@Override
+					public void run() {
+						MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+								"Edge with id "+ edge.getId() +" should have both source and target nodes!");
+					}
+				});
+				return false;
 			}
 		}
-		xmiIsOk=edgesOk;
+		for (XMIUseCaseNode node: nodes){
+			if (node.getType().equals("uml:UseCaseNode")){
+				if (node.getannotations().equals("")) {
+					annotationsOk= false;
+					
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+									"Provide annotations for all use cases first!");
+						}
+					});
+					return false;
+				}
+			}
+		}
+		xmiIsOk=edgesOk && annotationsOk;
 		return xmiIsOk;
 	}
 	

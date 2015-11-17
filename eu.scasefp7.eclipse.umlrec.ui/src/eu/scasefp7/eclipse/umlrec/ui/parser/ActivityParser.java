@@ -2,6 +2,8 @@ package eu.scasefp7.eclipse.umlrec.ui.parser;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -252,6 +254,7 @@ public class ActivityParser {
 	}
 
 	public boolean checkParsedXmi() {
+		final Display disp = Display.getCurrent();
 		boolean xmiIsOk = true;
 		boolean decisionNodesOk = true;
 		boolean initialNodeOk = true;
@@ -264,6 +267,14 @@ public class ActivityParser {
 		for (XMIEdge edge:edges){
 			if (edge.getSource().isEmpty() || edge.getTarget().isEmpty()){
 				edgesOk=false;
+				disp.syncExec(new Runnable() {
+					@Override
+					public void run() {
+						MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+								"Edge with id "+ edge.getId() +" should have both source and target nodes!");
+					}
+				});
+				return false;
 			}
 		}
 		for (XMIActivityNode n : nodes) {
@@ -271,44 +282,134 @@ public class ActivityParser {
 				for (int i = 0; i < n.getIncoming().size(); i++) {
 					if (n.getIncoming().get(i).isEmpty()) {
 						decisionNodesOk = false;
+						
+						disp.syncExec(new Runnable() {
+							@Override
+							public void run() {
+								MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+										"Decision node with id "+ n.getId() +" should have incoming node!");
+							}
+						});
+						return false;
 					}
 				}
 				for (int i = 0; i < n.getOutgoing().size(); i++) {
 					if (n.getOutgoing().get(i).isEmpty()) {
 						decisionNodesOk = false;
+						
+						disp.syncExec(new Runnable() {
+							@Override
+							public void run() {
+								MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+										"Decision node with id "+ n.getId() +" should have outgoing node!");
+							}
+						});
+						return false;
 					}
 
 				}
 				if (n.getOutgoing().size() < 2) {
 					decisionNodesOk = false;
+					
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+									"Decision node with id "+ n.getId() +" should have at least two outgoing nodes!");
+						}
+					});
+					return false;
 				}
 			} else if (n.getType().equals("uml:InitialNode")) {
 				if (n.getOutgoing().get(0).isEmpty()) {
 					initialNodeOk = false;
+					
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+									"Initial node with id "+ n.getId() +" should have outgoing node!");
+						}
+					});
+					return false;
 				}
 			} else if (n.getType().equals("uml:ActivityFinalNode")) {
 
 				if (n.getIncoming().get(0).isEmpty()) {
 					finalNodeOk = false;
+					
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+									"Final node with id "+ n.getId() +" should have incoming node!");
+						}
+					});
+					return false;
 				}
 
 			} else if (n.getType().equals("uml:OpaqueAction")) {
 				if (n.getIncoming().get(0).isEmpty() || n.getOutgoing().get(0).isEmpty()) {
 					actionNodesOk = false;
+					
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+									"Opaque Action node with id "+ n.getId() +" should have both incoming and outgoing node!");
+						}
+					});
+					return false;
 				}
 			} else if (n.getType().equals("uml:JoinNode")) {
 				if (n.getIncoming().get(0).isEmpty() || n.getOutgoing().get(0).isEmpty()) {
 					joinNodesOk = false;
+					
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+									"Join node with id "+ n.getId() +" should have both incoming and outgoing node!");
+						}
+					});
+					return false;
 				}
 				if (n.getIncoming().size() < 2) {
 					joinNodesOk = false;
+					
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+									"Join node with id "+ n.getId() +" should have at least two incoming nodes!");
+						}
+					});
+					return false;
 				}
 			} else if (n.getType().equals("uml:ForkNode")) {
 				if (n.getIncoming().get(0).isEmpty() || n.getOutgoing().get(0).isEmpty()) {
 					forkNodesOk = false;
+					
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+									"Fork node with id "+ n.getId() +" should have both incoming and outgoing node!");
+						}
+					});
+					return false;
 				}
 				if (n.getOutgoing().size() < 2) {
 					forkNodesOk = false;
+					
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+									"Fork node with id "+ n.getId() +" should have at least two outgoing nodes!");
+						}
+					});
+					return false;
 				}
 			}
 

@@ -16,8 +16,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -88,6 +90,7 @@ public class ExportToOntologyHandler extends AbstractHandler {
 				Element eElement = (Element) packagedElement;
 				String type = eElement.getAttribute("xmi:type");
 				boolean xmiIsOk = false;
+				final Display disp = Display.getCurrent();
 				if (type.equalsIgnoreCase("uml:Activity")) {
 					DynamicOntologyAPI ontology = new DynamicOntologyAPI(file.getProject());
 					String filename = file.getName();
@@ -103,9 +106,16 @@ public class ExportToOntologyHandler extends AbstractHandler {
 					xmiIsOk = parser.checkParsedXmi();
 					if (xmiIsOk) {
 						WriteDynamicOntology.modifyOntology(edgesWithCondition, edgesWithoutCondition, edges, nodes, ontology, diagramName);
+						disp.syncExec(new Runnable() {
+							@Override
+							public void run() {
+								MessageDialog.openInformation(disp.getActiveShell(), "Info",
+										"Export finished!");
+							}
+						});
 					}
 				} else if (type.equalsIgnoreCase("uml:Use Case")) {
-					StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject(), true);
+					StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject());
 					String filename = file.getName();
 					String diagramName = filename.substring(0, filename.lastIndexOf('.'));
 					diagramName = diagramName.substring(diagramName.lastIndexOf('\\') + 1) + "_UCdiagram";
@@ -114,7 +124,17 @@ public class ExportToOntologyHandler extends AbstractHandler {
 					parser.Parsexmi(doc);
 					ArrayList<XMIEdge> edges = parser.getEdges();
 					ArrayList<XMIUseCaseNode> nodes = parser.getNodes();
+					xmiIsOk = parser.checkParsedXmi();
+					if (xmiIsOk) {
 					WriteStaticOntology.modifyOntology(edges, nodes, ontology, diagramName);
+					disp.syncExec(new Runnable() {
+						@Override
+						public void run() {
+							MessageDialog.openInformation(disp.getActiveShell(), "Info",
+									"Export finished!");
+						}
+					});
+					}
 
 				}
 			}
