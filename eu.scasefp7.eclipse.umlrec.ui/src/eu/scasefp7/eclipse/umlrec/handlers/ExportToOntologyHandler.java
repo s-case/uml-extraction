@@ -1,6 +1,5 @@
 package eu.scasefp7.eclipse.umlrec.handlers;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +15,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,7 +26,6 @@ import org.xml.sax.SAXException;
 import eu.scasefp7.eclipse.core.ontology.DynamicOntologyAPI;
 import eu.scasefp7.eclipse.core.ontology.StaticOntologyAPI;
 import eu.scasefp7.eclipse.umlrec.ui.parser.*;
-
 
 /**
  * A command handler for exporting a uml diagram to the dynamic or static ontology.
@@ -74,7 +70,7 @@ public class ExportToOntologyHandler extends AbstractHandler {
 	 */
 	private void instantiateOntology(IFile file) {
 		try {
-			
+
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder;
 			docBuilder = docFactory.newDocumentBuilder();
@@ -90,7 +86,6 @@ public class ExportToOntologyHandler extends AbstractHandler {
 				Element eElement = (Element) packagedElement;
 				String type = eElement.getAttribute("xmi:type");
 				boolean xmiIsOk = false;
-				final Display disp = Display.getCurrent();
 				if (type.equalsIgnoreCase("uml:Activity")) {
 					DynamicOntologyAPI ontology = new DynamicOntologyAPI(file.getProject());
 					String filename = file.getName();
@@ -105,14 +100,8 @@ public class ExportToOntologyHandler extends AbstractHandler {
 					ArrayList<XMIActivityNode> nodes = parser.getNodes();
 					xmiIsOk = parser.checkParsedXmi();
 					if (xmiIsOk) {
-						WriteDynamicOntology.modifyOntology(edgesWithCondition, edgesWithoutCondition, edges, nodes, ontology, diagramName);
-						disp.syncExec(new Runnable() {
-							@Override
-							public void run() {
-								MessageDialog.openInformation(disp.getActiveShell(), "Info",
-										"Export finished!");
-							}
-						});
+						WriteDynamicOntology.modifyOntology(edgesWithCondition, edgesWithoutCondition, edges, nodes,
+								ontology, diagramName);
 					}
 				} else if (type.equalsIgnoreCase("uml:Use Case")) {
 					StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject());
@@ -126,14 +115,7 @@ public class ExportToOntologyHandler extends AbstractHandler {
 					ArrayList<XMIUseCaseNode> nodes = parser.getNodes();
 					xmiIsOk = parser.checkParsedXmi();
 					if (xmiIsOk) {
-					WriteStaticOntology.modifyOntology(edges, nodes, ontology, diagramName);
-					disp.syncExec(new Runnable() {
-						@Override
-						public void run() {
-							MessageDialog.openInformation(disp.getActiveShell(), "Info",
-									"Export finished!");
-						}
-					});
+						WriteStaticOntology.modifyOntology(edges, nodes, ontology, diagramName);
 					}
 
 				}
@@ -144,10 +126,4 @@ public class ExportToOntologyHandler extends AbstractHandler {
 		}
 	}
 
-
-
-	
-
-
 }
-

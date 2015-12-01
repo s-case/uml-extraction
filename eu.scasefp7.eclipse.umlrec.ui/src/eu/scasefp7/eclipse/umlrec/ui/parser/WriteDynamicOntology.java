@@ -1,9 +1,5 @@
 package eu.scasefp7.eclipse.umlrec.ui.parser;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 import eu.scasefp7.eclipse.core.ontology.DynamicOntologyAPI;
@@ -23,8 +19,7 @@ public class WriteDynamicOntology {
 	 *
 	 */
 	public static void modifyOntology(ArrayList<XMIEdge> edgesWithCondition, ArrayList<XMIEdge> edgesWithoutCondition,
-			ArrayList<XMIEdge> edges, ArrayList<XMIActivityNode> nodes, DynamicOntologyAPI ontology,
-			String diagramName) {
+			ArrayList<XMIEdge> edges, ArrayList<XMIActivityNode> nodes, DynamicOntologyAPI ontology, String diagramName) {
 
 		for (XMIActivityNode node : nodes) {
 			if (node.getType().equals("uml:InitialNode")) {
@@ -54,12 +49,15 @@ public class WriteDynamicOntology {
 
 		for (XMIEdge edge : edgesWithCondition) {
 
-			ontology.addTransition(((XMIActivityNode)edge.getSourceNode()).getName(), ((XMIActivityNode)edge.getTargetNode()).getName());
-			ontology.connectActivityDiagramToTransition(diagramName, ((XMIActivityNode)edge.getSourceNode()).getName(),
-					((XMIActivityNode)edge.getTargetNode()).getName());
+			ontology.addTransition(((XMIActivityNode) edge.getSourceNode()).getName(),
+					((XMIActivityNode) edge.getTargetNode()).getName());
+			ontology.connectActivityDiagramToTransition(diagramName,
+					((XMIActivityNode) edge.getSourceNode()).getName(),
+					((XMIActivityNode) edge.getTargetNode()).getName());
 			if (edge.getCondition() != null) {
-				ontology.addConditionToTransition(edge.getCondition(), ((XMIActivityNode)edge.getSourceNode()).getName(),
-						((XMIActivityNode)edge.getTargetNode()).getName());
+				ontology.addConditionToTransition(edge.getCondition(),
+						((XMIActivityNode) edge.getSourceNode()).getName(),
+						((XMIActivityNode) edge.getTargetNode()).getName());
 				// not needed
 				// ontology.connectActivityDiagramToElement(diagramName,
 				// edge.getCondition());
@@ -68,9 +66,11 @@ public class WriteDynamicOntology {
 
 		for (XMIEdge edge : edgesWithoutCondition) {
 
-			ontology.addTransition(((XMIActivityNode)edge.getSourceNode()).getName(), ((XMIActivityNode)edge.getTargetNode()).getName());
-			ontology.connectActivityDiagramToTransition(diagramName, ((XMIActivityNode)edge.getSourceNode()).getName(),
-					((XMIActivityNode)edge.getTargetNode()).getName());
+			ontology.addTransition(((XMIActivityNode) edge.getSourceNode()).getName(),
+					((XMIActivityNode) edge.getTargetNode()).getName());
+			ontology.connectActivityDiagramToTransition(diagramName,
+					((XMIActivityNode) edge.getSourceNode()).getName(),
+					((XMIActivityNode) edge.getTargetNode()).getName());
 		}
 
 		// Close and save the ontology

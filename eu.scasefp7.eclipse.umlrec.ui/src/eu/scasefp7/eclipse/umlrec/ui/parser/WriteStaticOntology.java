@@ -2,7 +2,6 @@ package eu.scasefp7.eclipse.umlrec.ui.parser;
 
 import java.util.ArrayList;
 
-import eu.scasefp7.eclipse.core.ontology.DynamicOntologyAPI;
 import eu.scasefp7.eclipse.core.ontology.StaticOntologyAPI;
 
 /**
@@ -45,23 +44,22 @@ public class WriteStaticOntology {
 
 				// has actor or connected use case
 				boolean nodeIsConnectedToActor = false;
-				
-				
+
 				for (String id : node.getincomingSolidNode()) {
 					for (XMIUseCaseNode connectedNode : nodes) {
 						if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UserNode")) {
 							ontology.connectActorToAction(connectedNode.getName(), action);
-							nodeIsConnectedToActor=true;
-						} else
-							if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UseCaseNode")) {
-							String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(connectedNode.getName(),
-									connectedNode.getannotations());
+							nodeIsConnectedToActor = true;
+						} else if (connectedNode.getId().equals(id)
+								&& connectedNode.getType().equals("uml:UseCaseNode")) {
+							String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(
+									connectedNode.getName(), connectedNode.getannotations());
 							String object2 = actionAndObject2[1];
 							ontology.connectObjectToObject(object1, object2);
 						}
 					}
 				}
-				
+
 				for (String id : node.getconnectedSolidNode()) {
 					for (XMIUseCaseNode connectedNode : nodes) {
 						if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UserNode")) {
@@ -74,8 +72,8 @@ public class WriteStaticOntology {
 					for (XMIUseCaseNode connectedNode : nodes) {
 						if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UseCaseNode")) {
 							if (nodeIsConnectedToActor) {
-								String[] actionAndObject2 = WriteDynamicOntology
-										.getActionAndObject(connectedNode.getName(), connectedNode.getannotations());
+								String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(
+										connectedNode.getName(), connectedNode.getannotations());
 								String object2 = actionAndObject2[1];
 								ontology.connectObjectToObject(object1, object2);
 							}
@@ -83,7 +81,6 @@ public class WriteStaticOntology {
 					}
 				}
 
-				
 				// extends or includes
 				for (String id : node.getincomingDashedNode()) {
 					for (XMIUseCaseNode connectedNode : nodes) {
