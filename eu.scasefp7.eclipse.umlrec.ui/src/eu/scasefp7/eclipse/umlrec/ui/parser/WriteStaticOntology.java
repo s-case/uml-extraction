@@ -106,8 +106,6 @@ public class WriteStaticOntology {
 			}
 		}
 
-		// Close and save the ontology
-		ontology.close();
 		System.out.println("\nFinish!");
 
 	}

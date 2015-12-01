@@ -73,8 +73,6 @@ public class WriteDynamicOntology {
 					((XMIActivityNode) edge.getTargetNode()).getName());
 		}
 
-		// Close and save the ontology
-		ontology.close();
 		System.out.println("\nFinish!");
 	}
 
