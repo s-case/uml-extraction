@@ -1,5 +1,6 @@
 package eu.scasefp7.eclipse.umlrec.ui.parser;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 /**
@@ -9,93 +10,56 @@ import java.util.ArrayList;
  * @author mkoutli
  *
  */
-public class XMIActivityNode {
-	private String type;
-	private String id;
-	private String name;
-	private String annotations;
+public class XMIActivityNode extends XMINode {
 	private ArrayList<String> incoming = new ArrayList<String>();
 	private ArrayList<String> outgoing = new ArrayList<String>();
 	private ArrayList<XMIActivityNode> sourceNodes= new ArrayList<XMIActivityNode>();
 	private ArrayList<XMIActivityNode> destinationNodes= new ArrayList<XMIActivityNode>();
 
 	public XMIActivityNode() {
-		this.type = "";
-		this.id = "";
-		this.name = "";
+		super();
 	}
 
-	public XMIActivityNode(String type, String id, String name, String annotations, ArrayList<String> incoming, ArrayList<String> outgoing) {
-		this.type = type;
-		this.id = id;
-		this.name = name;
-		this.annotations = annotations;
+	public XMIActivityNode(String type, String id, String name, String annotations, ArrayList<Point> coordinates, ArrayList<String> incoming, ArrayList<String> outgoing) {
+		super(type, id, name, annotations, coordinates);
 		this.incoming = incoming;
 		this.outgoing = outgoing;
 	}
 
 	// Getters and Setters
-	public String getName() {
-		return this.name;
-	}
-
-	public String getType() {
-		return this.type;
-	}
-	 public String getAnnotations(){
-		 return this.annotations;
-	 }
 
 	public ArrayList<String> getIncoming() {
 		return this.incoming;
+	}
+	
+	public void setIncoming(String oldValue, String newValue) {
+		this.incoming.remove(oldValue);
+		this.incoming.add(newValue);
 	}
 
 	public ArrayList<String> getOutgoing() {
 		return this.outgoing;
 	}
+	
+	public void setOutgoing(String oldValue, String newValue) {
+		this.outgoing.remove(oldValue);
+		this.outgoing.add(newValue);
+	}
+	
 	public ArrayList<XMIActivityNode> getSourceNodes() {
 		return this.sourceNodes;
+	}
+	
+	public void setSourceNodes(XMIActivityNode node) {
+		this.sourceNodes.add(node);
 	}
 
 	public ArrayList<XMIActivityNode> getDestinationNodes() {
 		return this.destinationNodes;
 	}
 
-	public String getId() {
-		return this.id;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-	
-	public void setAnnotations(String annotations) {
-		this.annotations = annotations;
-	}
-
-	public void setIncoming(String oldValue, String newValue) {
-		this.incoming.remove(oldValue);
-		this.incoming.add(newValue);
-	}
-
-	public void setOutgoing(String oldValue, String newValue) {
-		this.outgoing.remove(oldValue);
-		this.outgoing.add(newValue);
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-	public void setSourceNodes(XMIActivityNode node) {
-		this.sourceNodes.add(node);
-	}
 	public void setDestinationNodes(XMIActivityNode node) {
 		this.destinationNodes.add(node);
 	}
-
 }
 

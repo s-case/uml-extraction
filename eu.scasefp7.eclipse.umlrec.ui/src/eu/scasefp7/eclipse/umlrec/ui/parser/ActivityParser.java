@@ -1,6 +1,9 @@
 package eu.scasefp7.eclipse.umlrec.ui.parser;
 
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -35,9 +38,14 @@ public class ActivityParser {
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
 				Element eElement = (Element) nNode;
+				
+				String coordinates = eElement.getAttribute("coordinates");
+				ArrayList<Point> coordinatesList = new ArrayList<Point>();
+				coordinatesList = substringCoordinates(coordinates, coordinatesList);
+				
 				XMIEdge edge = new XMIEdge(eElement.getAttribute("name"), eElement.getAttribute("target"),
 						eElement.getAttribute("source"), eElement.getAttribute("xmi:id"),
-						eElement.getAttribute("xmi:type"));
+						eElement.getAttribute("xmi:type"), coordinatesList);
 				System.out.println("\nCurrent Element :" + edge.getName() + ", type: " + edge.getType());
 				edges.add(edge);
 			}
@@ -57,9 +65,13 @@ public class ActivityParser {
 
 				incoming = substring(incomingString, incoming);
 				outgoing = substring(outgoingString, outgoing);
+				
+				String coordinates = eElement.getAttribute("coordinates");
+				ArrayList<Point> coordinatesList = new ArrayList<Point>();
+				coordinatesList = substringCoordinates(coordinates, coordinatesList);
 
 				XMIActivityNode node = new XMIActivityNode(eElement.getAttribute("xmi:type"),
-						eElement.getAttribute("xmi:id"), eElement.getAttribute("name"), eElement.getAttribute("annotations"), incoming, outgoing);
+						eElement.getAttribute("xmi:id"), eElement.getAttribute("name"), eElement.getAttribute("annotations"), coordinatesList, incoming, outgoing);
 				
 				System.out.println("\nCurrent Element :" + node.getName() + ", type: " + node.getType());
 				nodes.add(node);
@@ -155,7 +167,7 @@ public class ActivityParser {
 				int i = 1;
 				for (XMIActivityNode source : sourcesOfConditionNode) {
 					for (XMIActivityNode destination : destinationsOfConditionNode) {
-						XMIEdge e = new XMIEdge("", destination.getId(), source.getId(), "", "uml:ControlFlow");
+						XMIEdge e = new XMIEdge("", destination.getId(), source.getId(), "", "uml:ControlFlow", null);
 						e.setSourceNode(source);
 						e.setTargetNode(destination);
 						if (n.getType().equals("uml:DecisionNode")) {
@@ -236,7 +248,7 @@ public class ActivityParser {
 	 *            the empty list
 	 * @return the list with the string values
 	 */
-	private ArrayList<String> substring(String s, ArrayList<String> list) {
+	protected static ArrayList<String> substring(String s, ArrayList<String> list) {
 		int previousOccurance = 0;
 		int counter = 0;
 		for (int i = 0; i < s.length(); i++) {
@@ -249,6 +261,32 @@ public class ActivityParser {
 			}
 		}
 		list.add(s.substring(previousOccurance, s.length()));
+
+		return list;
+	}
+	/**
+	 * Split a string into coordinates.
+	 * @param s
+	 * @param list
+	 * @return
+	 */
+	protected static ArrayList<Point> substringCoordinates(String s, ArrayList<Point> list) {
+		Pattern p = Pattern.compile("\\(([^)]+)\\)");
+		Matcher m = p.matcher(s);
+		String x="";
+		String y="";
+		while(m.find()) {
+			String c = m.group(1);
+			//System.out.println(m.group(1));   
+			for (int i = 0; i < c.length(); i++) {
+				if (c.charAt(i) == ',') {
+					x= c.substring(0, i);
+					y = c.substring(i+1);
+				}
+			}
+			Point coor = new Point(Integer.valueOf(x), Integer.valueOf(y));
+		    list.add(coor);
+		}
 
 		return list;
 	}

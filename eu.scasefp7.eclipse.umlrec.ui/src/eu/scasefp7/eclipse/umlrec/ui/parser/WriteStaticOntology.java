@@ -23,7 +23,7 @@ public class WriteStaticOntology {
 
 			} else if (node.getType().equals("uml:UseCaseNode")) {
 				String[] actionAndObject = WriteDynamicOntology.getActionAndObject(node.getName(),
-						node.getannotations());
+						node.getAnnotations());
 				String action = actionAndObject[0];
 				String object1 = actionAndObject[1];
 				ontology.addAction(action);
@@ -39,7 +39,7 @@ public class WriteStaticOntology {
 		for (XMIUseCaseNode node : nodes) {
 			if (node.getType().equals("uml:UseCaseNode")) {
 				String[] actionAndObject = WriteDynamicOntology.getActionAndObject(node.getName(),
-						node.getannotations());
+						node.getAnnotations());
 				String action = actionAndObject[0];
 				String object1 = actionAndObject[1];
 
@@ -55,7 +55,7 @@ public class WriteStaticOntology {
 						} else
 							if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UseCaseNode")) {
 							String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(connectedNode.getName(),
-									connectedNode.getannotations());
+									connectedNode.getAnnotations());
 							String object2 = actionAndObject2[1];
 							ontology.connectObjectToObject(object1, object2);
 						}
@@ -75,7 +75,7 @@ public class WriteStaticOntology {
 						if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UseCaseNode")) {
 							if (nodeIsConnectedToActor) {
 								String[] actionAndObject2 = WriteDynamicOntology
-										.getActionAndObject(connectedNode.getName(), connectedNode.getannotations());
+										.getActionAndObject(connectedNode.getName(), connectedNode.getAnnotations());
 								String object2 = actionAndObject2[1];
 								ontology.connectObjectToObject(object1, object2);
 							}
@@ -92,7 +92,7 @@ public class WriteStaticOntology {
 								if (((XMIUseCaseNode) edge.getSourceNode()).getId().equals(id)
 										&& ((XMIUseCaseNode) edge.getTargetNode()).getId().equals(node.getId())) {
 									String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(
-											connectedNode.getName(), connectedNode.getannotations());
+											connectedNode.getName(), connectedNode.getAnnotations());
 									String object2 = actionAndObject2[1];
 									if (edge.getName().equalsIgnoreCase("extend")) {
 										ontology.connectObjectToObject(object1, object2);

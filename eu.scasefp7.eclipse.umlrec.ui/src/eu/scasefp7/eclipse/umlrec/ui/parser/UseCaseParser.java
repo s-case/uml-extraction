@@ -1,5 +1,6 @@
 package eu.scasefp7.eclipse.umlrec.ui.parser;
 
+import java.awt.Point;
 import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -19,7 +20,7 @@ public class UseCaseParser {
 
 	ArrayList<XMIEdge> edges = new ArrayList<XMIEdge>();
 	ArrayList<XMIUseCaseNode> nodes = new ArrayList<XMIUseCaseNode>();
-	String type= "use-case";
+	String type = "use-case";
 
 	public void Parsexmi(Document doc) {
 
@@ -33,9 +34,12 @@ public class UseCaseParser {
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
 				Element eElement = (Element) nNode;
+				String coordinates = eElement.getAttribute("coordinates");
+				ArrayList<Point> coordinatesList = new ArrayList<Point>();
+				coordinatesList = ActivityParser.substringCoordinates(coordinates, coordinatesList);
 				XMIEdge edge = new XMIEdge(eElement.getAttribute("name"), eElement.getAttribute("target"),
 						eElement.getAttribute("source"), eElement.getAttribute("xmi:id"),
-						eElement.getAttribute("xmi:type"));
+						eElement.getAttribute("xmi:type"), coordinatesList);
 				System.out.println("\nCurrent Element :" + edge.getName() + ", type: " + edge.getType());
 				edges.add(edge);
 			}
@@ -61,16 +65,21 @@ public class UseCaseParser {
 				ArrayList<String> connectedSolid = new ArrayList<String>();
 				ArrayList<String> connectedDashed = new ArrayList<String>();
 
-				incomingSolid = substring(incomingSolidString, incomingSolid);
-				outgoingSolid = substring(outgoingSolidString, outgoingSolid);
-				incomingDashed = substring(incomingDashedString, incomingDashed);
-				outgoingDashed = substring(outgoingDashedString, outgoingDashed);
-				connectedSolid = substring(connectedSolidString, connectedSolid);
-				connectedDashed = substring(connectedDashedString, connectedDashed);
+				incomingSolid = ActivityParser.substring(incomingSolidString, incomingSolid);
+				outgoingSolid = ActivityParser.substring(outgoingSolidString, outgoingSolid);
+				incomingDashed = ActivityParser.substring(incomingDashedString, incomingDashed);
+				outgoingDashed = ActivityParser.substring(outgoingDashedString, outgoingDashed);
+				connectedSolid = ActivityParser.substring(connectedSolidString, connectedSolid);
+				connectedDashed = ActivityParser.substring(connectedDashedString, connectedDashed);
+				
+				String coordinates = eElement.getAttribute("coordinates");
+				ArrayList<Point> coordinatesList = new ArrayList<Point>();
+				coordinatesList = ActivityParser.substringCoordinates(coordinates, coordinatesList);
 
-				XMIUseCaseNode node = new XMIUseCaseNode(eElement.getAttribute("xmi:type"), eElement.getAttribute("xmi:id"),
-						eElement.getAttribute("name"), eElement.getAttribute("annotations"), incomingSolid, outgoingSolid, incomingDashed, outgoingDashed,
-						connectedSolid, connectedDashed);
+				XMIUseCaseNode node = new XMIUseCaseNode(eElement.getAttribute("xmi:type"),
+						eElement.getAttribute("xmi:id"), eElement.getAttribute("name"),
+						eElement.getAttribute("annotations"), coordinatesList, incomingSolid, outgoingSolid, incomingDashed,
+						outgoingDashed, connectedSolid, connectedDashed);
 				System.out.println("\nCurrent Element :" + node.getName() + ", type: " + node.getType());
 				nodes.add(node);
 			}
@@ -106,70 +115,71 @@ public class UseCaseParser {
 		return edges;
 	}
 
-	private ArrayList<String> substring(String s, ArrayList<String> list) {
-		int previousOccurance = 0;
-		int counter = 0;
-		for (int i = 0; i < s.length(); i++) {
-			if (s.charAt(i) == '_') {
-				counter++;
-				if (counter > 1 && previousOccurance < i) {
-					list.add(s.substring(previousOccurance, i - 1));
-				}
-				previousOccurance = i;
-			}
-		}
-		list.add(s.substring(previousOccurance, s.length()));
+//	private ArrayList<String> substring(String s, ArrayList<String> list) {
+//		int previousOccurance = 0;
+//		int counter = 0;
+//		for (int i = 0; i < s.length(); i++) {
+//			if (s.charAt(i) == '_') {
+//				counter++;
+//				if (counter > 1 && previousOccurance < i) {
+//					list.add(s.substring(previousOccurance, i - 1));
+//				}
+//				previousOccurance = i;
+//			}
+//		}
+//		list.add(s.substring(previousOccurance, s.length()));
+//
+//		return list;
+//	}
 
-		return list;
-	}
-	
-	public boolean checkParsedXmi() {
+	public boolean checkParsedXmi(boolean checkAnnotations) {
 		final Display disp = Display.getCurrent();
 		boolean xmiIsOk = true;
 		boolean edgesOk = true;
 		boolean annotationsOk = true;
-		for (XMIEdge edge:edges){
-			if (edge.getSource().isEmpty() || edge.getTarget().isEmpty()){
-				edgesOk=false;
-				
+		for (XMIEdge edge : edges) {
+			if (edge.getSource().isEmpty() || edge.getTarget().isEmpty()) {
+				edgesOk = false;
+
 				disp.syncExec(new Runnable() {
 					@Override
 					public void run() {
 						MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-								"Edge with id "+ edge.getId() +" should have both source and target nodes!");
+								"Edge with id " + edge.getId() + " should have both source and target nodes!");
 					}
 				});
 				return false;
 			}
 		}
-		for (XMIUseCaseNode node: nodes){
-			if (node.getType().equals("uml:UseCaseNode")){
-				if (node.getannotations().equals("")) {
-					annotationsOk= false;
-					
-					disp.syncExec(new Runnable() {
-						@Override
-						public void run() {
-							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Provide annotations for all use cases first!");
-						}
-					});
-					return false;
+		for (XMIUseCaseNode node : nodes) {
+			if (node.getType().equals("uml:UseCaseNode")) {
+				if (checkAnnotations) {
+					if (node.getAnnotations().equals("")) {
+						annotationsOk = false;
+
+						disp.syncExec(new Runnable() {
+							@Override
+							public void run() {
+								MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
+										"Provide annotations for all use cases first!");
+							}
+						});
+						return false;
+					}
 				}
 			}
 		}
-		xmiIsOk=edgesOk && annotationsOk;
+		xmiIsOk = edgesOk && annotationsOk;
 		return xmiIsOk;
 	}
-	
+
 	/**
 	 * 
 	 * @return the diagram's type
 	 */
 
-	public String getType(){
+	public String getType() {
 		return type;
 	}
 
-	
 }
