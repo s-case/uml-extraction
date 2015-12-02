@@ -49,11 +49,19 @@ public class WriteStaticOntology {
 					for (XMIUseCaseNode connectedNode : nodes) {
 						if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UserNode")) {
 							ontology.connectActorToAction(connectedNode.getName(), action);
+<<<<<<< HEAD
+							nodeIsConnectedToActor=true;
+						} else
+							if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UseCaseNode")) {
+							String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(connectedNode.getName(),
+									connectedNode.getAnnotations());
+=======
 							nodeIsConnectedToActor = true;
 						} else if (connectedNode.getId().equals(id)
 								&& connectedNode.getType().equals("uml:UseCaseNode")) {
 							String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(
 									connectedNode.getName(), connectedNode.getannotations());
+>>>>>>> e0d6711c9a9b38b3a0e70f4c02311a9621c067bb
 							String object2 = actionAndObject2[1];
 							ontology.connectObjectToObject(object1, object2);
 						}
@@ -72,8 +80,13 @@ public class WriteStaticOntology {
 					for (XMIUseCaseNode connectedNode : nodes) {
 						if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UseCaseNode")) {
 							if (nodeIsConnectedToActor) {
+<<<<<<< HEAD
+								String[] actionAndObject2 = WriteDynamicOntology
+										.getActionAndObject(connectedNode.getName(), connectedNode.getAnnotations());
+=======
 								String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(
 										connectedNode.getName(), connectedNode.getannotations());
+>>>>>>> e0d6711c9a9b38b3a0e70f4c02311a9621c067bb
 								String object2 = actionAndObject2[1];
 								ontology.connectObjectToObject(object1, object2);
 							}

@@ -68,12 +68,21 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 	/**
 	 * Returns the XML document of a file.
 	 * 
+<<<<<<< HEAD
+	 * @param file
+	 *            an {@link IFile} instance of a uml diagram.
+=======
 	 * @param file the file of which the XML document is returned.
 	 * @return the XML document of the file, or null if there is a parsing error.
+>>>>>>> e0d6711c9a9b38b3a0e70f4c02311a9621c067bb
 	 */
 	private Document getXMIDocOfFile(IFile file) {
 		Document doc = null;
 		try {
+<<<<<<< HEAD
+
+=======
+>>>>>>> e0d6711c9a9b38b3a0e70f4c02311a9621c067bb
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
@@ -99,15 +108,67 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 			if (packagedElement.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) packagedElement;
 				String type = eElement.getAttribute("xmi:type");
+<<<<<<< HEAD
+				boolean xmiIsOk = false;
+				final Display disp = Display.getCurrent();
+				if (type.equalsIgnoreCase("uml:Activity")) {
+					DynamicOntologyAPI ontology = new DynamicOntologyAPI(file.getProject());
+					String filename = file.getName();
+					String diagramName = filename.substring(0, filename.lastIndexOf('.'));
+					diagramName = diagramName.substring(diagramName.lastIndexOf('\\') + 1) + "_ACdiagram";
+					ontology.addActivityDiagram(diagramName);
+					ActivityParser parser = new ActivityParser();
+					parser.Parsexmi(doc);
+					ArrayList<XMIEdge> edgesWithCondition = parser.getEdgesWithCondition();
+					ArrayList<XMIEdge> edgesWithoutCondition = parser.getEdgesWithoutCondition();
+					ArrayList<XMIEdge> edges = parser.getEdges();
+					ArrayList<XMIActivityNode> nodes = parser.getNodes();
+					xmiIsOk = parser.checkParsedXmi();
+					if (xmiIsOk) {
+						WriteDynamicOntology.modifyOntology(edgesWithCondition, edgesWithoutCondition, edges, nodes,
+								ontology, diagramName);
+						disp.syncExec(new Runnable() {
+							@Override
+							public void run() {
+								MessageDialog.openInformation(disp.getActiveShell(), "Info", "Export finished!");
+							}
+						});
+					}
+				} else if (type.equalsIgnoreCase("uml:Use Case")) {
+					StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject());
+					String filename = file.getName();
+					String diagramName = filename.substring(0, filename.lastIndexOf('.'));
+					diagramName = diagramName.substring(diagramName.lastIndexOf('\\') + 1) + "_UCdiagram";
+					ontology.addRequirement(diagramName);
+					UseCaseParser parser = new UseCaseParser();
+					parser.Parsexmi(doc);
+					ArrayList<XMIEdge> edges = parser.getEdges();
+					ArrayList<XMIUseCaseNode> nodes = parser.getNodes();
+					xmiIsOk = parser.checkParsedXmi(true);
+					if (xmiIsOk) {
+						WriteStaticOntology.modifyOntology(edges, nodes, ontology, diagramName);
+						disp.syncExec(new Runnable() {
+							@Override
+							public void run() {
+								MessageDialog.openInformation(disp.getActiveShell(), "Info", "Export finished!");
+							}
+						});
+					}
+
+				}
+=======
 				if (type.equalsIgnoreCase("uml:Use Case"))
 					return "UseCaseDiagram";
 				else if (type.equalsIgnoreCase("uml:Activity"))
 					return "ActivityDiagram";
+>>>>>>> e0d6711c9a9b38b3a0e70f4c02311a9621c067bb
 			}
 		}
 		return "Error";
 	}
 
+<<<<<<< HEAD
+=======
 	/**
 	 * Instantiates the ontology given the file of a uml diagram.
 	 * 
@@ -175,4 +236,5 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 		}
 	}
 
+>>>>>>> e0d6711c9a9b38b3a0e70f4c02311a9621c067bb
 }

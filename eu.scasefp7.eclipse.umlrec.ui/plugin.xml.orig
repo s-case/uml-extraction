@@ -19,9 +19,12 @@
    <extension point="org.eclipse.ui.commands">
       <category id="eu.scasefp7.eclipse.umlrec.commands.category" name="SCaseUMLExtractor Commands Category"/>
       <command categoryId="eu.scasefp7.eclipse.umlrec.commands.category" id="eu.scasefp7.eclipse.umlrec.commands.exportToOntology" name="Export to ontology"/>
+<<<<<<< HEAD
+      <command categoryId="eu.scasefp7.eclipse.umlrec.commands.category" id="eu.scasefp7.eclipse.umlrec.commands.convertToPapyrus" name="Convert to Papyrus diagrams"/>
+=======
       <command categoryId="eu.scasefp7.eclipse.umlrec.commands.category" id="eu.scasefp7.eclipse.umlrec.commands.exportUseCaseDiagramsToOntology" name="Export Use Case Diagrams to ontology"/>
       <command categoryId="eu.scasefp7.eclipse.umlrec.commands.category" id="eu.scasefp7.eclipse.umlrec.commands.exportActivityDiagramsToOntology" name="Export Activity Diagrams to ontology"/>
-      <command categoryId="eu.scasefp7.eclipse.umlrec.commands.category" id="eu.scasefp7.eclipse.umlrec.commands.convertToPapyrus" name="Convert to Papyrus diagrams"/>
+>>>>>>> e0d6711c9a9b38b3a0e70f4c02311a9621c067bb
    </extension>
 
    <extension point="org.eclipse.ui.handlers">
