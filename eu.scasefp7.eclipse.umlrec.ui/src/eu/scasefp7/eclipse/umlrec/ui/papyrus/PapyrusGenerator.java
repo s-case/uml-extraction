@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -169,18 +168,22 @@ public class PapyrusGenerator {
 				packagedElement.setAttribute("xmi:id", getUniqueId());
 				packagedElement.setAttribute("name", "RootElement");
 				
-				StringJoiner nodesStringJoiner = new StringJoiner(" ");
+				StringBuilder nodesStringJoiner = new StringBuilder();
 				if (sourceUMLType.equalsIgnoreCase("uml:Activity")) {
 					for (XMIActivityNode node : sourceUMLActivityNodes) {
-						nodesStringJoiner.add(node.getId());
+						nodesStringJoiner.append(node.getId() + " ");
 					}
 				}
 				else if (sourceUMLType.equalsIgnoreCase("uml:Use Case")) {
 					for (XMIUseCaseNode node : sourceUMLUseCaseNodes) {
-						nodesStringJoiner.add(node.getId());
+						nodesStringJoiner.append(node.getId() + " ");
 					}
 				}
-				packagedElement.setAttribute("node",nodesStringJoiner.toString());
+				String nodesString = nodesStringJoiner.toString();
+				if (nodesString.length() > 0)
+					packagedElement.setAttribute("node", nodesString.substring(0, nodesString.length() - 1));
+				else
+					packagedElement.setAttribute("node", nodesString);
 				
 				// edge elements
 				for (XMIEdge edge : sourceUMLEdges) {
@@ -390,11 +393,15 @@ public class PapyrusGenerator {
 				}
 			}
 	
-			StringJoiner stringJoiner = new StringJoiner(" ");
+			StringBuilder stringJoiner = new StringBuilder();
 			for (String incomingEdgeId : incomingEdgeIds) {
-				stringJoiner.add(incomingEdgeId);
+				stringJoiner.append(incomingEdgeId + " ");
 			}
-			incomingEdgeIdsString = stringJoiner.toString();
+			String string = stringJoiner.toString();
+			if (string.length() > 0)
+				incomingEdgeIdsString = string.substring(0, string.length() - 1);
+			else
+				incomingEdgeIdsString = string;
 		}
 		
 		return incomingEdgeIdsString;
@@ -421,11 +428,15 @@ public class PapyrusGenerator {
 				}
 			}
 			
-			StringJoiner stringJoiner = new StringJoiner(" ");
+			StringBuilder stringJoiner = new StringBuilder();
 			for (String outgoingEdgeId : outgoingEdgeIds) {
-				stringJoiner.add(outgoingEdgeId);
+				stringJoiner.append(outgoingEdgeId + " ");
 			}
-			outgoingEdgeIdsString = stringJoiner.toString();
+			String string = stringJoiner.toString();
+			if (string.length() > 0)
+				outgoingEdgeIdsString = string.substring(0, string.length() - 1);
+			else
+				outgoingEdgeIdsString = string;
 		}
 		
 		return outgoingEdgeIdsString;
