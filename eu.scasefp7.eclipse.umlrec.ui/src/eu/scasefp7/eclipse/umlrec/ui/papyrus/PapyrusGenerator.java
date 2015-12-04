@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,6 +37,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.modelmanagers.AbstractPapyrusModelManager;
+import eu.scasefp7.eclipse.umlrec.ui.papyrus.preferences.PreferencesManager;
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.utils.EditorUtils;
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.utils.FileUtils;
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.utils.ProjectUtils;
@@ -77,6 +79,7 @@ public class PapyrusGenerator {
 		this.modelName = FileUtils.getFileNameWithOutExtension(sourceUML);
 		this.sourceUMLPath = sourceUML.getRawLocationURI().toString();
 		this.parseSourceUML(sourceUML);
+		this.makeSourceUMLPapyrusCompliant();
 		SettingsRegistry.setPapyrusModelManager(manager);
 	}
 	
@@ -106,8 +109,8 @@ public class PapyrusGenerator {
 					if(parser!=null) {
 						ArrayList<XMIActivityNode> nodes = parser.getNodes();
 						ArrayList<XMIEdge> edges = parser.getEdges();
-	//					ArrayList<XMIEdge> edgesWithCondition = parser.getEdgesWithCondition();
-	//					ArrayList<XMIEdge> edgesWithoutCondition = parser.getEdgesWithoutCondition();
+//						ArrayList<XMIEdge> edgesWithCondition = parser.getEdgesWithCondition();
+//						ArrayList<XMIEdge> edgesWithoutCondition = parser.getEdgesWithoutCondition();
 						
 						if (parser.checkParsedXmi()) {
 							setSourceUMLActivityNodes(nodes);
@@ -141,131 +144,291 @@ public class PapyrusGenerator {
 	 * @throws ParserConfigurationException 
 	 * @throws TransformerException 
 	 */
-	private void makeSourceUMLPapyrusCompliant() throws ParserConfigurationException, TransformerException {
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		
-		// uml:Model element
-		Document doc = docBuilder.newDocument();
-		Element rootElement = doc.createElement("uml:Model");
-		doc.appendChild(rootElement);
-		
-		rootElement.setAttribute("xmi:version","20131001");
-		rootElement.setAttribute("xmlns:xmi","http://www.omg.org/spec/XMI/20131001");
-		rootElement.setAttribute("xmlns:uml","http://www.eclipse.org/uml2/5.0.0/UML");
-		rootElement.setAttribute("xmi:id","_CHUecI9aEeWta7TZnSTWlg");
-		rootElement.setAttribute("name","model");
-		
-		// packagedElement element
-		Element packagedElement = doc.createElement("packagedElement");
-		rootElement.appendChild(packagedElement);
-		
-		packagedElement.setAttribute("xmi:type","uml:Activity");
-		packagedElement.setAttribute("xmi:id","_COdBMI9aEeWta7TZnSTWlg");
-		packagedElement.setAttribute("name","Activity");
-		
-		StringJoiner nodesStringJoiner = new StringJoiner(" ");
-		if (sourceUMLType.equalsIgnoreCase("uml:Activity")) {
-			for (XMIActivityNode node : sourceUMLActivityNodes) {
-				nodesStringJoiner.add(node.getId());
-			}
-		}
-		else if (sourceUMLType.equalsIgnoreCase("uml:Use Case")) {
-			for (XMIUseCaseNode node : sourceUMLUseCaseNodes) {
-				nodesStringJoiner.add(node.getId());
-			}
-		}
-		packagedElement.setAttribute("node",nodesStringJoiner.toString());
-		
-		// edge elements
-		for (XMIEdge edge : sourceUMLEdges) {
-			Element edgeElement = doc.createElement("edge");
-			packagedElement.appendChild(edgeElement);
+	private void makeSourceUMLPapyrusCompliant() {
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			
-			edgeElement.setAttribute("xmi:type",edge.getType());
-			edgeElement.setAttribute("xmi:id",edge.getId());
-			if(edge.getName().isEmpty()==false) {
-				edgeElement.setAttribute("name",edge.getName());
-			}
-			edgeElement.setAttribute("target",edge.getTarget());
-			edgeElement.setAttribute("source",edge.getSource());
-		}
-		
-		// node elements
-		if (sourceUMLType.equalsIgnoreCase("uml:Activity")) {
-			for (XMIActivityNode node : sourceUMLActivityNodes) {
-				Element nodeElement = doc.createElement("node");
-				packagedElement.appendChild(nodeElement);
+			// uml:Model element
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("uml:Model");
+			doc.appendChild(rootElement);
+			
+			rootElement.setAttribute("xmi:version","20131001");
+			rootElement.setAttribute("xmlns:xmi","http://www.omg.org/spec/XMI/20131001");
+			rootElement.setAttribute("xmlns:uml","http://www.eclipse.org/uml2/5.0.0/UML");
+			rootElement.setAttribute("xmi:id", getUniqueId());
+			rootElement.setAttribute("name","model");
+			
+			if (sourceUMLType.equalsIgnoreCase("uml:Activity")) {
+				// packagedElement element
+				Element packagedElement = doc.createElement("packagedElement");
+				rootElement.appendChild(packagedElement);
+			
+				packagedElement.setAttribute("xmi:type", "uml:Activity");
+				packagedElement.setAttribute("xmi:id", getUniqueId());
+				packagedElement.setAttribute("name", "RootElement");
 				
-				nodeElement.setAttribute("xmi:type",node.getType());
-				nodeElement.setAttribute("xmi:id",node.getId());
-				if(node.getName().isEmpty()==false){
-					nodeElement.setAttribute("name",node.getName());
+				StringJoiner nodesStringJoiner = new StringJoiner(" ");
+				if (sourceUMLType.equalsIgnoreCase("uml:Activity")) {
+					for (XMIActivityNode node : sourceUMLActivityNodes) {
+						nodesStringJoiner.add(node.getId());
+					}
 				}
+				else if (sourceUMLType.equalsIgnoreCase("uml:Use Case")) {
+					for (XMIUseCaseNode node : sourceUMLUseCaseNodes) {
+						nodesStringJoiner.add(node.getId());
+					}
+				}
+				packagedElement.setAttribute("node",nodesStringJoiner.toString());
 				
-				if(node.getIncoming().isEmpty()==false) {
-					List<String> incomingEdgeIds = new ArrayList<String>();
+				// edge elements
+				for (XMIEdge edge : sourceUMLEdges) {
+					Element edgeElement = doc.createElement("edge");
+					packagedElement.appendChild(edgeElement);
 					
-					for (String incomingNodeId : node.getIncoming()) {
-						for (XMIEdge edge : sourceUMLEdges){
-							if(incomingNodeId.equals(edge.getSource()) && (edge.getTarget().equals(node.getId()))){
-								incomingEdgeIds.add(edge.getId());
+					edgeElement.setAttribute("xmi:type",edge.getType());
+					edgeElement.setAttribute("xmi:id",edge.getId());
+					String edgeName = edge.getName();
+					if(edgeName!=null && edgeName.isEmpty()==false) {
+						edgeElement.setAttribute("name", edgeName);
+					}
+					edgeElement.setAttribute("target",edge.getTarget());
+					edgeElement.setAttribute("source",edge.getSource());
+				}
+			
+				// node elements
+				for (XMIActivityNode node : sourceUMLActivityNodes) {
+					Element nodeElement = doc.createElement("node");
+					packagedElement.appendChild(nodeElement);
+					
+					nodeElement.setAttribute("xmi:type",node.getType());
+					String nodeId = node.getId();
+					nodeElement.setAttribute("xmi:id", nodeId);
+					String nodeName = node.getName();
+					if(nodeName!=null && nodeName.isEmpty()==false){
+						nodeElement.setAttribute("name", nodeName);
+					}
+					
+					nodeElement.setAttribute("incoming",getNodeIncomingEdgeIds(nodeId, node.getIncoming()));
+					nodeElement.setAttribute("outgoing",getNodeOutgoingEdgeIds(nodeId, node.getOutgoing()));
+					
+					List<Point> coordinates = node.getCoordinates();
+					if(coordinates!=null && coordinates.isEmpty()==false  && coordinates.get(0)!=null) {
+						Point nodePoint = coordinates.get(0);
+						layoutController.put(nodeId, nodePoint);
+					}
+				}
+			}
+			else if (sourceUMLType.equalsIgnoreCase("uml:Use Case")) {
+				for (XMIUseCaseNode node : sourceUMLUseCaseNodes) {
+					Element packagedElement = doc.createElement("packagedElement");
+					rootElement.appendChild(packagedElement);
+					
+					String nodeType = node.getType();
+					switch(nodeType) {
+						case "uml:UserNode":
+							packagedElement.setAttribute("xmi:type", "uml:Actor");
+							break;
+						case "uml:UseCaseNode":
+							packagedElement.setAttribute("xmi:type", "uml:UseCase");
+							break;
+						default:
+							packagedElement.setAttribute("xmi:type", nodeType);
+							break;
+					}
+					
+					String nodeId = node.getId();
+					packagedElement.setAttribute("xmi:id", nodeId);
+					
+					String nodeName = node.getName();
+					if(nodeName!=null && nodeName.isEmpty()==false){
+						packagedElement.setAttribute("name", nodeName);
+					}
+					
+					// generalizations
+					List<String> outgoingSolidNodesIds = node.getoutgoingSolidNode();
+					if(outgoingSolidNodesIds!=null && outgoingSolidNodesIds.isEmpty()==false) {
+						for (String outgoingNodeId : outgoingSolidNodesIds) {
+							if(outgoingNodeId.isEmpty()==false) {
+								for (XMIEdge edge : sourceUMLEdges){
+									if(outgoingNodeId.equals(edge.getTarget()) && edge.getSource().equals(nodeId)) {
+										Element generalization = doc.createElement("generalization");
+										generalization.setAttribute("xmi:type", "uml:Generalization");
+										generalization.setAttribute("xmi:id", getUniqueId());
+										generalization.setAttribute("general", outgoingNodeId);
+										packagedElement.appendChild(generalization);
+									}
+								}
 							}
 						}
 					}
-	
-					StringJoiner incomingStringJoiner = new StringJoiner(" ");
-					for (String incomingEdgeId : incomingEdgeIds) {
-						incomingStringJoiner.add(incomingEdgeId);
-					}
-					nodeElement.setAttribute("incoming",incomingStringJoiner.toString());
-				}
-				
-				if(node.getOutgoing().isEmpty()==false){
-					List<String> outgoingEdgeIds = new ArrayList<String>();
-	
-					for (String outgoingNodeId : node.getOutgoing()) {
-						for (XMIEdge edge : sourceUMLEdges){
-							if(outgoingNodeId.equals(edge.getTarget()) && (edge.getSource().equals(node.getId()))){
-								outgoingEdgeIds.add(edge.getId());
+					
+					// associations
+					List<String> connectedSolidNodesIds = node.getconnectedSolidNode();
+					if(connectedSolidNodesIds!=null && connectedSolidNodesIds.isEmpty()==false) {
+						for (String connectedNodeId : connectedSolidNodesIds) {
+							if(connectedNodeId.isEmpty()==false) {
+								for (XMIEdge edge : sourceUMLEdges) {
+									if(connectedNodeId.equals(edge.getTarget()) && edge.getSource().equals(nodeId)) {
+										Element association = doc.createElement("packagedElement");
+										association.setAttribute("xmi:type", "uml:Association");
+										String associationId = getUniqueId();
+										association.setAttribute("xmi:id", associationId);
+										
+										Element ownedEnd1 = doc.createElement("ownedEnd");
+										ownedEnd1.setAttribute("xmi:type","uml:Property");
+										String ownedEnd1Id = getUniqueId();
+										ownedEnd1.setAttribute("xmi:id", ownedEnd1Id);
+										ownedEnd1.setAttribute("name", "");
+										ownedEnd1.setAttribute("type", nodeId);
+										ownedEnd1.setAttribute("association", associationId);
+										
+										Element ownedEnd2 = doc.createElement("ownedEnd");
+										ownedEnd2.setAttribute("xmi:type","uml:Property");
+										String ownedEnd2Id = getUniqueId();
+										ownedEnd2.setAttribute("xmi:id", ownedEnd2Id);
+										ownedEnd2.setAttribute("name", "");
+										ownedEnd2.setAttribute("type", connectedNodeId);
+										ownedEnd2.setAttribute("association", associationId);
+										
+										association.setAttribute("memberEnd", ownedEnd1Id+" "+ownedEnd2Id);
+										association.appendChild(ownedEnd1);
+										association.appendChild(ownedEnd2);
+										rootElement.appendChild(association);
+									}
+								}
 							}
 						}
 					}
 					
-					StringJoiner outgoingStringJoiner = new StringJoiner(" ");
-					for (String outgoingEdgeId : outgoingEdgeIds) {
-						outgoingStringJoiner.add(outgoingEdgeId);
+					// include - extend
+					List<String> outgoingDashedNodesIds = node.getoutgoingDashedNode();
+					if(outgoingDashedNodesIds!=null && outgoingDashedNodesIds.isEmpty()==false) {
+						for (String outgoingNodeId : outgoingDashedNodesIds) {
+							if(outgoingNodeId.isEmpty()==false) {
+								for (XMIEdge edge : sourceUMLEdges) {
+									if(outgoingNodeId.equals(edge.getTarget()) && edge.getSource().equals(nodeId)) {
+										if(edge.getName().equalsIgnoreCase("include")) {
+											Element include = doc.createElement("include");
+											include.setAttribute("xmi:type", "uml:Include");
+											String includeId = getUniqueId();
+											include.setAttribute("xmi:id", includeId);
+											include.setAttribute("addition", outgoingNodeId);
+											packagedElement.appendChild(include);
+										}
+										else if(edge.getName().equalsIgnoreCase("extend")) {
+											Element extend = doc.createElement("extend");
+											extend.setAttribute("xmi:type", "uml:Extend");
+											String extendId = getUniqueId();
+											extend.setAttribute("xmi:id", extendId);
+											extend.setAttribute("extendedCase", outgoingNodeId);
+											packagedElement.appendChild(extend);
+										}
+									}
+								}
+							}
+						}
 					}
-					nodeElement.setAttribute("outgoing",outgoingStringJoiner.toString());
-				}
-				
-				List<Point> coordinates = node.getCoordinates();
-				if(coordinates.isEmpty()==false) {
-					Point nodePoint = coordinates.get(0);
-					layoutController.put(node.getId(), nodePoint);
+					
+					List<Point> coordinates = node.getCoordinates();
+					if(coordinates!=null && coordinates.isEmpty()==false && coordinates.get(0)!=null) {
+						Point nodePoint = coordinates.get(0);
+						layoutController.put(node.getId(), nodePoint);
+					}
 				}
 			}
+			
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			
+			String sourceUMLFolder = new Path(new Path(sourceUMLPath).toFile().getParent().toString()).toString();
+			String newModelName = modelName +"_model";
+			String newSourceUMLPath = sourceUMLFolder + "/" + newModelName +".uml";
+			File f = new File(newSourceUMLPath.replace("file:", ""));
+			StreamResult result = new StreamResult(f);
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+			transformer.transform(source, result);
+			
+			setModelName(newModelName);
+			setSourceUMLPath(newSourceUMLPath);
+		} catch (ParserConfigurationException | TransformerException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		else if (sourceUMLType.equalsIgnoreCase("uml:Use Case")) {
-			// TODO: handle also use-case diagrams
+	}
+	
+	/**
+	 * Generates a unique ID string to use for xmi:id.
+	 * @return The resulting unique ID string
+	 */
+	private String getUniqueId() {
+		return "_"+UUID.randomUUID().toString().toUpperCase();
+	}
+	
+	/**
+	 * Gets the correct string for the node incoming property, containing 
+	 * the incoming edge ids and not the node ids.
+	 * @param nodeId - The node's xmi:id
+	 * @param incomingNodesIds - The list with the xmi:ids of the incoming nodes
+	 * @return incomingEdgeIdsString - The resulting string
+	 */
+	private String getNodeIncomingEdgeIds(String nodeId, List<String> incomingNodesIds) {
+		String incomingEdgeIdsString = "";
+		
+		if(incomingNodesIds!=null && incomingNodesIds.isEmpty()==false) {
+			List<String> incomingEdgeIds = new ArrayList<String>();
+			
+			for (String incomingNodeId : incomingNodesIds) {
+				for (XMIEdge edge : sourceUMLEdges){
+					if(incomingNodeId.equals(edge.getSource()) && edge.getTarget().equals(nodeId)) {
+						incomingEdgeIds.add(edge.getId());
+					}
+				}
+			}
+	
+			StringJoiner stringJoiner = new StringJoiner(" ");
+			for (String incomingEdgeId : incomingEdgeIds) {
+				stringJoiner.add(incomingEdgeId);
+			}
+			incomingEdgeIdsString = stringJoiner.toString();
 		}
 		
-		// write the content into xml file
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(doc);
+		return incomingEdgeIdsString;
+	}
+	
+	/**
+	 * Gets the correct string for the node outgoing property, containing 
+	 * the outgoing edge ids and not the node ids.
+	 * @param nodeId - The node's xmi:id
+	 * @param outgoingNodesIds - The list with the xmi:ids of the outgoing nodes
+	 * @return outgoingEdgeIdsString - The resulting string.
+	 */
+	private String getNodeOutgoingEdgeIds(String nodeId, List<String> outgoingNodesIds) {
+		String outgoingEdgeIdsString = "";
 		
-		String sourceUMLFolder = new Path(new Path(sourceUMLPath).toFile().getParent().toString()).toString();
-		String newModelName = modelName +"_model";
-		String newSourceUMLPath = sourceUMLFolder + "/" + newModelName +".uml";
-		File f = new File(newSourceUMLPath.replace("file:", ""));
-		StreamResult result = new StreamResult(f);
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-		transformer.transform(source, result);
+		if(outgoingNodesIds!=null && outgoingNodesIds.isEmpty()==false) {
+			List<String> outgoingEdgeIds = new ArrayList<String>();
+
+			for (String outgoingNodeId : outgoingNodesIds) {
+				for (XMIEdge edge : sourceUMLEdges){
+					if(outgoingNodeId.equals(edge.getTarget()) && edge.getSource().equals(nodeId)) {
+						outgoingEdgeIds.add(edge.getId());
+					}
+				}
+			}
+			
+			StringJoiner stringJoiner = new StringJoiner(" ");
+			for (String outgoingEdgeId : outgoingEdgeIds) {
+				stringJoiner.add(outgoingEdgeId);
+			}
+			outgoingEdgeIdsString = stringJoiner.toString();
+		}
 		
-		setModelName(newModelName);
-		setSourceUMLPath(newSourceUMLPath);
+		return outgoingEdgeIdsString;
 	}
 	
 	/**
@@ -410,17 +573,20 @@ public class PapyrusGenerator {
 	 */
 	public IStatus run(IProgressMonitor monitor) throws ModelMultiException, ServiceException, ParserConfigurationException, TransformerException {
 		monitor.beginTask("Papyrus Model Generation", 100);
-
-		monitor.subTask("Making UML compliant...");
-		makeSourceUMLPapyrusCompliant();
-		monitor.worked(10);
 		
-		// TODO: handle use-case diagrams also
 		monitor.subTask("Creating new Papyrus project...");
 		IProject project = ProjectUtils.createProject(projectName);
 		ProjectUtils.openProject(project);
 		monitor.worked(20);
 		
+		if(sourceUMLType.equalsIgnoreCase("uml:Activity")) {
+			PreferencesManager.setValue(PreferencesManager.ACTIVITY_DIAGRAM_PREF, true);
+			PreferencesManager.setValue(PreferencesManager.USE_CASE_DIAGRAM_PREF, false);
+		}
+		else if (sourceUMLType.equalsIgnoreCase("uml:Use Case")) { 
+			PreferencesManager.setValue(PreferencesManager.ACTIVITY_DIAGRAM_PREF, false);
+			PreferencesManager.setValue(PreferencesManager.USE_CASE_DIAGRAM_PREF, true);
+		}
 		createAndOpenPapyrusModel(new SubProgressMonitor(monitor, 80));
 		SettingsRegistry.clear();
 		

@@ -15,7 +15,7 @@ import eu.scasefp7.eclipse.umlrec.ui.papyrus.utils.ElementsManagerUtils;
 /**
  * A class for controlling elements of ActivityDiagrams.
  *
- * @author tsirelis
+ * @author Andr�s Dobreff, tsirelis
  */
 public class ActivityDiagramElementsController {
 	

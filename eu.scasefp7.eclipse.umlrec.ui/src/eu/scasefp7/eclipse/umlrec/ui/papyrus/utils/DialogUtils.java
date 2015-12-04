@@ -14,6 +14,11 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * 
+ * @author tsirelis
+ *
+ */
 public class DialogUtils {
 	/**
 	 * Opens an {@link DialogUtils}

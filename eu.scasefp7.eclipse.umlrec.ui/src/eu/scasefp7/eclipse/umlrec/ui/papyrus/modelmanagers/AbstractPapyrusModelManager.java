@@ -21,7 +21,7 @@ import eu.scasefp7.eclipse.umlrec.ui.papyrus.utils.DialogUtils;
 /**
  * Controls the Papyrus Model
  *
- * @author Andr�s Dobreff
+ * @author Andr�s Dobreff, tsirelis
  */
 public abstract class AbstractPapyrusModelManager {
 

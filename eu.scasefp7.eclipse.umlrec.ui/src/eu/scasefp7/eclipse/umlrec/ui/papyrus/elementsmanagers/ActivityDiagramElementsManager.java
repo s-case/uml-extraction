@@ -44,7 +44,7 @@ import eu.scasefp7.eclipse.umlrec.ui.papyrus.preferences.PreferencesManager;
 /**
  * An abstract class for adding/removing elements to ActivityDiagrams.
  *
- * @author tsirelis
+ * @author Andr�s Dobreff, tsirelis
  */
 public class ActivityDiagramElementsManager extends AbstractDiagramElementsManager{
 	

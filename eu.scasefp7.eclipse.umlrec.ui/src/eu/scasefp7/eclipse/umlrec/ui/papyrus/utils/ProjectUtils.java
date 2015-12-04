@@ -6,6 +6,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+/**
+ * Responsible for basic functionalities of an Eclipse Project
+ *
+ * @author András Dobreff
+ */
+
 public class ProjectUtils {
 	
 	/**

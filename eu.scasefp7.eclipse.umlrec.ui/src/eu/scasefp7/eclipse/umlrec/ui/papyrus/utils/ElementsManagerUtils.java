@@ -18,7 +18,7 @@ import org.eclipse.uml2.uml.Element;
 
 /**
  * This Class provides servies of adding and removing elements from the diagram or it's elements
- * @author tsirelis
+ * @author Andr�s Dobreff, tsirelis
  */
 public class ElementsManagerUtils {
 	

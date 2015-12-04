@@ -26,6 +26,8 @@ public class PreferencesManager{
 	
 	public static final String ACTIVITY_DIAGRAM_PREF = "Activity Diagram";
 	public static final String ACTIVITY_DIAGRAM_COMMENT_PREF = "Activity Diagram Comment";
+	public static final String USE_CASE_DIAGRAM_PREF = "Use-case Diagram";
+	public static final String USE_CASE_DIAGRAM_COMMENT_PREF = "Use-case Diagram Comment";
 	public static final String ARRANGE_DIAGRAM_ELEMENTS_PREF = "Arrange Diagram Elements";
 	
 	static{
@@ -33,6 +35,8 @@ public class PreferencesManager{
 		
 		fieldsWithDefaultValues.put(ACTIVITY_DIAGRAM_PREF, true);
 		fieldsWithDefaultValues.put(ACTIVITY_DIAGRAM_COMMENT_PREF, false);
+		fieldsWithDefaultValues.put(USE_CASE_DIAGRAM_PREF, true);
+		fieldsWithDefaultValues.put(USE_CASE_DIAGRAM_COMMENT_PREF, false);
 		fieldsWithDefaultValues.put(ARRANGE_DIAGRAM_ELEMENTS_PREF, false);
 	}
 	

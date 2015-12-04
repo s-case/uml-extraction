@@ -8,6 +8,12 @@ import java.nio.file.Path;
 
 import org.eclipse.core.resources.IFile;
 
+/**
+ * 
+ * @author tsirelis
+ *
+ */
+
 public class FileUtils {
 
 	/**

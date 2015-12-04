@@ -26,6 +26,12 @@ import org.eclipse.uml2.uml.Profile;
 
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.utils.UML2Utils;
 
+/**
+ * Controls the creation of a Papyrus Model
+ *
+ * @author Andr�s Dobreff
+ */
+
 public class PapyrusModelCreator {
 	private IFile diFile;
 	private IFile umlFile;

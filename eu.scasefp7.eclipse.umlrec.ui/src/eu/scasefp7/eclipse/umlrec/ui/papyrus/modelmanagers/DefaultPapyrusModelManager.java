@@ -11,20 +11,23 @@ import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.papyrus.infra.core.editor.IMultiDiagramEditor;
 import org.eclipse.papyrus.uml.diagram.activity.CreateActivityDiagramCommand;
+import org.eclipse.papyrus.uml.diagram.usecase.CreateUseCaseDiagramCommand;
 import org.eclipse.uml2.uml.Activity;
 import org.eclipse.uml2.uml.Element;
+import org.eclipse.uml2.uml.Model;
 
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.elementsarrangers.ActivityDiagramElementsGmfArranger;
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.elementsarrangers.ArrangeException;
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.elementsarrangers.IDiagramElementsArranger;
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.elementsmanagers.AbstractDiagramElementsManager;
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.elementsmanagers.ActivityDiagramElementsManager;
+import eu.scasefp7.eclipse.umlrec.ui.papyrus.elementsmanagers.UseCaseDiagramElementsManager;
 import eu.scasefp7.eclipse.umlrec.ui.papyrus.preferences.PreferencesManager;
 
 /**
  *	The Default representation of Papyrus Model manager
  *
- * @author Andr�s Dobreff
+ *	@author Andr�s Dobreff, tsirelis
  */
 public class DefaultPapyrusModelManager extends AbstractPapyrusModelManager {
 	protected Map<String, Point> layoutController = new HashMap<String, Point>();
@@ -47,10 +50,14 @@ public class DefaultPapyrusModelManager extends AbstractPapyrusModelManager {
 		monitor.beginTask("Generating empty diagrams", 100);
 		monitor.subTask("Creating empty diagrams...");
 		
-		// TODO: handle also use-case diagrams
 		if(PreferencesManager.getBoolean(PreferencesManager.ACTIVITY_DIAGRAM_PREF)){
 			List<Element> activities = modelManager.getElementsOfTypes(Arrays.asList(Activity.class));
 			diagramManager.createDiagrams(activities, new CreateActivityDiagramCommand());
+		}
+		
+		if(PreferencesManager.getBoolean(PreferencesManager.USE_CASE_DIAGRAM_PREF)){
+			List<Element> models = modelManager.getElementsOfTypes(Arrays.asList(Model.class));
+			diagramManager.createDiagrams(models, new CreateUseCaseDiagramCommand());
 		}
 		
 		monitor.worked(100);
@@ -90,16 +97,24 @@ public class DefaultPapyrusModelManager extends AbstractPapyrusModelManager {
 		Element container = diagramManager.getDiagramContainer(diagram);
 		AbstractDiagramElementsManager diagramElementsManager;
 		DiagramEditPart diagep = diagramManager.getActiveDiagramEditPart();
-		// TODO: add support for use-case diagram
-		if(diagram.getType().equals("PapyrusUMLActivityDiagram")){
+		
+		if(diagram.getType().equals("PapyrusUMLActivityDiagram")) {
 			diagramElementsManager = new ActivityDiagramElementsManager(diagep);
-		}else{
+		}
+		else if(diagram.getType().equals("UseCase")){
+			diagramElementsManager = new UseCaseDiagramElementsManager(diagep);
+		}
+		else{
 			return;
 		}
 		
 		List<Element> baseElements = modelManager.getAllChildrenOfPackage(container);
-//		diagramElementsManager.addElementsToDiagram(baseElements);
-		diagramElementsManager.addElementsToDiagram(baseElements, layoutController);
+		if(layoutController.isEmpty()) {
+			diagramElementsManager.addElementsToDiagram(baseElements);
+		}
+		else {
+			diagramElementsManager.addElementsToDiagram(baseElements, layoutController);
+		}
 	}	
 
 }
