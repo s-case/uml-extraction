@@ -146,7 +146,7 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 		parser.Parsexmi(doc);
 		ArrayList<XMIEdge> edges = parser.getEdges();
 		ArrayList<XMIUseCaseNode> nodes = parser.getNodes();
-		if (parser.checkParsedXmi()) {
+		if (parser.checkParsedXmi(false)) {
 			WriteStaticOntology.modifyOntology(edges, nodes, ontology, diagramName);
 		}
 	}
