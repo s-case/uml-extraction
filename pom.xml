@@ -77,6 +77,11 @@
 			<layout>p2</layout>
 			<url>http://s-case.github.io/s-case_dev_site_wo_core/</url>
 		</repository>
+		<repository>
+			<id>papyrus</id>
+			<layout>p2</layout>
+			<url>http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/luna/1.0.2</url>
+		</repository>
 	</repositories>
 
         <dependencies>
