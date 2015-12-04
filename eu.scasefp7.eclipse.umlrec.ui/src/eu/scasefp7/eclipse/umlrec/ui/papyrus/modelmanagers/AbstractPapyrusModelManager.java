@@ -25,19 +25,15 @@ import eu.scasefp7.eclipse.umlrec.ui.papyrus.utils.DialogUtils;
  */
 public abstract class AbstractPapyrusModelManager {
 
-	
 	/**
-	 * TODO add doc
-	 */
-	protected final static String diagramType_CD = "PapyrusUMLClassDiagram";
-	/**
-	 * TODO add doc
-	 */
-	protected final static String diagramType_SMD = "PapyrusUMLStateMachineDiagram";
-	/**
-	 * TODO add doc
+	 * The activity diagram type
 	 */
 	protected final static String diagramType_AD = "PapyrusUMLActivityDiagram";
+	
+	/**
+	 * The use-case diagram type
+	 */
+	protected final static String diagramType_UC = "UseCase";
 	
 	/**
 	 * The DiagramManager controls the diagrams

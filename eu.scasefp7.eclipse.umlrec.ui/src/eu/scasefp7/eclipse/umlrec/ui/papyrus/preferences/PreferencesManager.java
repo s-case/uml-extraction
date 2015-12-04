@@ -19,7 +19,6 @@ import eu.scasefp7.eclipse.umlrec.ui.Activator;
 @SuppressWarnings("javadoc")
 public class PreferencesManager{
 	
-	// TODO: add also preferences for use-case diagrams
 	private static IPreferenceStore store = Activator.getDefault().getPreferenceStore() ;
 	private static Map<String, Object> fieldsWithDefaultValues;
 	private static final String STRING_DELIMITER = "__#010#__"; 

@@ -79,7 +79,7 @@ public class DefaultPapyrusModelManager extends AbstractPapyrusModelManager {
 		IDiagramElementsArranger diagramElementsArranger;
 		DiagramEditPart diagep = diagramManager.getActiveDiagramEditPart();
 		// TODO: add support for use-case diagram
-		if(diagram.getType().equals("PapyrusUMLActivityDiagram")){
+		if(diagram.getType().equals(diagramType_AD)){
 			diagramElementsArranger = new ActivityDiagramElementsGmfArranger(diagep);
 		}else{
 			return;
@@ -98,10 +98,10 @@ public class DefaultPapyrusModelManager extends AbstractPapyrusModelManager {
 		AbstractDiagramElementsManager diagramElementsManager;
 		DiagramEditPart diagep = diagramManager.getActiveDiagramEditPart();
 		
-		if(diagram.getType().equals("PapyrusUMLActivityDiagram")) {
+		if(diagram.getType().equals(diagramType_AD)) {
 			diagramElementsManager = new ActivityDiagramElementsManager(diagep);
 		}
-		else if(diagram.getType().equals("UseCase")){
+		else if(diagram.getType().equals(diagramType_UC)){
 			diagramElementsManager = new UseCaseDiagramElementsManager(diagep);
 		}
 		else{

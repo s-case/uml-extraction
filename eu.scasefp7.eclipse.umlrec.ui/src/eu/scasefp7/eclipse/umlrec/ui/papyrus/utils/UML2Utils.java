@@ -9,11 +9,21 @@ import org.eclipse.uml2.uml.Model;
 
 public class UML2Utils {
 
+	/**
+	 * Loads a model from string URI 
+	 * @param modelUri - The URI string of the model
+	 * @return the loaded model
+	 */
 	public static Model loadModel(String modelUri) throws WrappedException
 	{
 		return loadModel(URI.createPlatformResourceURI(modelUri, false));
 	}
 
+	/**
+	 * Loads a model from URI 
+	 * @param modelUri - The URI of the model
+	 * @return the loaded model
+	 */
 	public static Model loadModel(URI modelUri) throws WrappedException
 	{
 		ResourceSet resSet = new ResourceSetImpl();
