@@ -165,7 +165,16 @@ public class PreferencesManager{
 	}
 	
 	public static void setValue(String name, Collection<String> collection){
-		String value = String.join(STRING_DELIMITER, collection);
+		StringBuilder sb = new StringBuilder();
+		boolean firstElement = true;
+		for (String element : collection) {
+			if (firstElement)
+				firstElement = false;
+			else
+				sb.append(STRING_DELIMITER);
+			sb.append(element);
+		}
+		String value = sb.toString();
 		setValue(name, value);
 	}
 	
