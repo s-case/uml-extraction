@@ -602,7 +602,7 @@ public class PapyrusGenerator {
 		SettingsRegistry.clear();
 		
 		monitor.subTask("Cleaning up");
-		FileUtils.deleteFile(java.nio.file.Paths.get(sourceUMLPath.replace("file:", "")));
+		FileUtils.deleteFile(java.nio.file.Paths.get(sourceUMLPath.replace("file:/", "")));
 		monitor.worked(100);
 		
 		return Status.OK_STATUS;
