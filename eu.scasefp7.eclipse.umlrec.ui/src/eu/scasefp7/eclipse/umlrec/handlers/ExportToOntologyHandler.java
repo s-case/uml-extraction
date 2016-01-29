@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 
 import eu.scasefp7.eclipse.core.ontology.DynamicOntologyAPI;
 import eu.scasefp7.eclipse.core.ontology.StaticOntologyAPI;
-import eu.scasefp7.eclipse.umlrec.ui.parser.*;
+import eu.scasefp7.eclipse.umlrec.parser.*;
 
 /**
  * A command handler for exporting a uml diagram to the dynamic or static

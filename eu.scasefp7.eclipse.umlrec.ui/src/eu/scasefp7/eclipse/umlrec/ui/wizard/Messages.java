@@ -4,6 +4,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "eu.scasefp7.eclipse.umlrec.ui.wizard.messages"; //$NON-NLS-1$
+    public static String PapyrusExportJob_Failed;
 	public static String PageOne_DiagramTypeLabel;
 	public static String FileEditorJob_EditorOpenFailed;
 	public static String FileEditorJobDescription;
@@ -29,6 +30,7 @@ public class Messages extends NLS {
 	public static String PageTwo_ThreshError;
 	public static String PageTwo_ThreshLabel;
 	public static String PageTwo_Checkbox;
+    public static String PageTwo_ExportPapyrusModel;
 	public static String PageTwo_Description;
 	public static String PageTwo_Title;
 	
@@ -40,6 +42,7 @@ public class Messages extends NLS {
 	public static String UMLrecognizerJob_RecognStart;
 	public static String UMLrecognizerJob_SetImageDescription;
 	public static String UMLrecognizerJob_UMLrecognizerJobName;
+	public static String PageTwo_btnCheckButton_text;
 	
 	static {
 		// initialize resource bundle
