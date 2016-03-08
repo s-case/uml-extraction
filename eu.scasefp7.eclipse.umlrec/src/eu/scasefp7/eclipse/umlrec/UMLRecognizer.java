@@ -1,98 +1,115 @@
 package eu.scasefp7.eclipse.umlrec;
 
 import java.io.IOException;
+
 import java.net.URL;
-import java.util.List;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.Bundle;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.multipart.BodyPart;
+import com.sun.jersey.multipart.MultiPart;
 
-import eu.scasefp7.eclipse.umlrec.internal.UMLrecog;
+import javax.imageio.ImageIO;
+import javax.ws.rs.core.MediaType;
+
+import java.awt.image.BufferedImage;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 public class UMLRecognizer {
-	
-	private static final String RECOGNIZER_DATA = "tessdata";
-	
-	/** Reference to the wrapped uml recognizer object */
-	protected UMLrecog _umlRec = null;
-	
+
 	/** Store the image file name */
 	protected String _fileName = null;
-	
-	/** Store the tesseract recognizer files */
-	protected String _tessData = null;
-	
-	public static final boolean SHOW_IMAGES=false;
-	public static final int THRESH=230;
-	public static final double SIZE_RATE=1.0;
-	public static final double DIST_NEIGHBOR_OBJECTS=20.0;
-	public static final double COVER_AREA_THR=1.0;
+
+	/** The UML Server url */
+	final String BASE_URI = "http://uml.scasefp7.com:8080/UMLServer/";
+	private Image image = new Image();
+	private String xmi;
+	private boolean isUseCase;
+	public static final boolean SHOW_IMAGES = false;
+	public static final int THRESH = 230;
+	public static final double SIZE_RATE = 1.0;
+	public static final double DIST_NEIGHBOR_OBJECTS = 20.0;
+	public static final double COVER_AREA_THR = 1.0;
 
 	/**
 	 * 
 	 */
-	public UMLRecognizer() throws MissingRecognizerNativeException {
-		this._umlRec = new UMLrecog();
-		
-		Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
-		Path path = new Path(RECOGNIZER_DATA); //$NON-NLS-1$
-		URL url = FileLocator.find(bundle, path, null);
-		try {
-			URL fileUrl = FileLocator.toFileURL(url);
-			Path fullPath = new Path(fileUrl.getPath());
-			System.out.println(fullPath.toOSString());
-			this._tessData = fullPath.removeTrailingSeparator().toOSString();
-			this._umlRec.setTessPath(this._tessData);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void clear() {
-		this._umlRec.clear();
-	}
-	
-	public void setImage(String fileName) throws RecognitionException {
-		// The setImage function returns true if it succeeded to load the image, otherwise false.
-		this._fileName = fileName;
-		boolean res = this._umlRec.setImage(fileName);
-		
-		if(res == false) {
-			throw new RecognitionException("Failed to load the image file " + fileName); //$NON-NLS-1$
-		} 
-	}
-	
-	public void process() throws MissingRecognizerDataException, RecognitionException {
-		// The process function returns 
-		// 	0 for a successful run, 
-		//	-2 if TessData files are missing OR the program failed to analyse the text of the diagram and 
-		// 	-1 if an unknown error occurred.
-		
-		int result = this._umlRec.process();
+	public UMLRecognizer() {
 
-		if(result == -2) {
-			throw new MissingRecognizerDataException("Missing tessdata files or text analysis failed"); //$NON-NLS-1$
+	}
+
+	public void setIsUseCase(boolean isUseCase) {
+		this.isUseCase = isUseCase;
+	}
+
+	public void setImage(String fileName) throws RecognitionException {
+		image.setName(fileName);
+		String[] split = fileName.split("\\.");
+		image.setFormat(split[split.length - 1]);
+
+	}
+
+	public void process() throws MissingRecognizerDataException, RecognitionException, IOException {
+		// The process function returns
+		// 0 for a successful run,
+		// -2 if TessData files are missing OR the program failed to analyse the
+		// text of the diagram and
+		// -1 if an unknown error occurred.
+
+		Client c = Client.create();
+
+		WebResource service = c.resource(BASE_URI);
+
+		ByteArrayOutputStream bas = new ByteArrayOutputStream();
+		URL url = new File(image.getName()).toURI().toURL();
+		BufferedImage bi = ImageIO.read(url);
+		ImageIO.write(bi, image.getFormat(), bas);
+		byte[] logo = bas.toByteArray();
+
+		// Construct a MultiPart with two body parts
+		MultiPart multiPart = new MultiPart().bodyPart(new BodyPart(image, MediaType.APPLICATION_XML_TYPE))
+				.bodyPart(new BodyPart(logo, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+
+		// POST the request
+
+		if (isUseCase) {
+
+			ClientResponse response = service.path("/usecase").type("multipart/mixed").post(ClientResponse.class,
+					multiPart);
+			xmi = response.getEntity(String.class);
+		} else {
+
+			ClientResponse response = service.path("/activity").type("multipart/mixed").post(ClientResponse.class,
+					multiPart);
+			xmi = response.getEntity(String.class);
 		}
-		
-		if(result == -1) {
-			throw new RecognitionException("Unknown recognition error"); //$NON-NLS-1$
-		}
-			
+
 		return;
 	}
-	
-	public List<String> getXMIcontent() {
-		return this._umlRec.getXMIcontent();
+
+	public String getXMIcontent() {
+		return this.xmi;
 	}
-	
-	public void setTessPath(String pathName) {
-		this._umlRec.setTessPath(pathName);
+
+	public void setParameters(boolean isUseCase, boolean showImages, int thresh, double sizeRate,
+			double distNeightborObjects, double coverAreaThr) {
+		this.isUseCase = isUseCase;
+		image.setImageThreshold(thresh);
+		image.setRectangleRate(sizeRate);
+		image.setMinDistance(distNeightborObjects);
+		image.setMinRate(coverAreaThr);
+
 	}
-	
-	public void setParameters(boolean isUseCase, boolean showImages, int thresh, double sizeRate, double distNeightborObjects, double coverAreaThr) {
-		this._umlRec.setParameters(isUseCase, showImages, thresh, sizeRate, distNeightborObjects, coverAreaThr);
+
+	public Image getImage() {
+		return image;
+	}
+
+	public void setXmi(String xmi) {
+		this.xmi = xmi;
 	}
 
 }

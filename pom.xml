@@ -35,14 +35,11 @@
 		<tag>HEAD</tag>
 	</scm>
 
-	<modules>
-		<module>eu.scasefp7.eclipse.umlrec</module>
-		<module>eu.scasefp7.eclipse.umlrec.ui</module>
-		<module>eu.scasefp7.eclipse.umlrec.linux.x64</module>
-		<module>eu.scasefp7.eclipse.umlrec.win32.x64</module>
-		<module>eu.scasefp7.eclipse.umlrec.win32.x86</module>
+	<modules>		
+		<module>eu.scasefp7.eclipse.umlrec</module>		
 		<module>eu.scasefp7.eclipse.umlrec.feature</module>
-		<module>eu.scasefp7.eclipse.umlrec.update-site</module>
+		<module>eu.scasefp7.eclipse.umlrec.dependencies.feature</module>
+		<module>eu.scasefp7.eclipse.umlrec.update-site</module>		
 	</modules>
 
 	<properties>
@@ -90,6 +87,7 @@
                 <artifactId>eu.scasefp7.eclipse.core</artifactId>
                 <version>1.1.1-SNAPSHOT</version>
             </dependency>
+            
         </dependencies>
 
 	<build>
@@ -101,41 +99,6 @@
 				<extensions>true</extensions>
 			</plugin>
 
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho.version}</version>
-				<configuration>
-                                        <pomDependencies>consider</pomDependencies>
-					<environments>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>linux</os>
-							<ws>gtk</ws>
-							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86</arch>
-						</environment>
-						<environment>
-							<os>win32</os>
-							<ws>win32</ws>
-							<arch>x86_64</arch>
-						</environment>
-						<environment>
-							<os>macosx</os>
-							<ws>cocoa</ws>
-							<arch>x86_64</arch>
-						</environment>
-					</environments>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 </project>

@@ -9,8 +9,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>eu.scasefp7.eclipse.umlrec</artifactId>
-	<packaging>eclipse-plugin</packaging>
+	<artifactId>eu.scasefp7.eclipse.umlrec.dependencies.feature</artifactId>
+	<packaging>eclipse-feature</packaging>
 
-	
 </project>

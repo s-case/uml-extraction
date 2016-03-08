@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="eu.scasefp7.eclipse.umlrec.feature"
-      label="UML recognizer"
+      id="eu.scasefp7.eclipse.umlrec.dependencies.feature"
+      label="UML Recognition third-party dependencies"
       version="1.0.0.qualifier"
       provider-name="S-CASE Consortium"
       plugin="eu.scasefp7.eclipse.umlrec">
 
-   <description url="https://github.com/s-case/uml-extraction">
-      Frontend to UML recognizer module presented as an Eclipse import wizard. Image files of type JPG, JPEG2000, PNG and BMP are supported. Activity and use case diagrams can be detected. Result is stored in an XMI file and can be automatically opened in an associated editor.
+   <description url="https://github.com/s-case/web-service-composition">
+      This is the UML Recognition plugin, a tool for the EU-funded
+project S-CASE
    </description>
 
    <copyright url="http://www.scasefp7.eu/copyright">
@@ -209,10 +210,8 @@
       <update label="S-CASE update site" url="http://s-case.github.io/s-case_update_site/"/>
    </url>
 
-   <plugin
-         id="eu.scasefp7.eclipse.umlrec"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+   
+
+ 
 
 </feature>
