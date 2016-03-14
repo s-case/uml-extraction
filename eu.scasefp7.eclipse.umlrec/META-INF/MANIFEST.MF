@@ -28,7 +28,7 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.gmf.tooling.runtime;bundle-version="[3.2.0,3.3.5)",
  org.eclipse.papyrus.uml.diagram.clazz;bundle-version="[1.0.2,1.1.5)",
  org.eclipse.papyrus.infra.viewpoints.configuration.edit;bundle-version="[1.0.2,1.1.5)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: imgscalr-lib-4.2.jar,
  jersey-client-1.18.4.jar,
