@@ -29,10 +29,10 @@ public class UMLRecognizer {
 	private String xmi;
 	private boolean isUseCase;
 	public static final boolean SHOW_IMAGES = false;
-	public static final int THRESH = 230;
-	public static final double SIZE_RATE = 1.0;
-	public static final double DIST_NEIGHBOR_OBJECTS = 20.0;
-	public static final double COVER_AREA_THR = 1.0;
+	public static final int THRESH = 200;
+	public static final double SIZE_RATE = 15.0;
+	public static final double DIST_NEIGHBOR_OBJECTS = 5.0;
+	public static final double COVER_AREA_THR = 40.0;
 
 	/**
 	 * 
