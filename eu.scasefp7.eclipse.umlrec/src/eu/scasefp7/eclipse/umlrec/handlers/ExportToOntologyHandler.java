@@ -140,7 +140,7 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 		Document doc = getXMIDocOfFile(file);
 		String filename = file.getName();
 		String diagramName = filename.substring(0, filename.lastIndexOf('.'));
-		diagramName = diagramName.substring(diagramName.lastIndexOf('\\') + 1) + "_UCdiagram";
+		diagramName = "UCD_" + diagramName.substring(diagramName.lastIndexOf('\\') + 1);
 		ontology.addRequirement(diagramName);
 		UseCaseParser parser = new UseCaseParser();
 		parser.Parsexmi(doc);
@@ -161,7 +161,7 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 		Document doc = getXMIDocOfFile(file);
 		String filename = file.getName();
 		String diagramName = filename.substring(0, filename.lastIndexOf('.'));
-		diagramName = diagramName.substring(diagramName.lastIndexOf('\\') + 1) + "_ACdiagram";
+		diagramName = "ACD_" + diagramName.substring(diagramName.lastIndexOf('\\') + 1);
 		ontology.addActivityDiagram(diagramName);
 		ActivityParser parser = new ActivityParser();
 		parser.Parsexmi(doc);
