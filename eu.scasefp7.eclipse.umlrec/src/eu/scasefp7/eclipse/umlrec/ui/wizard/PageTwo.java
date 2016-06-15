@@ -2,6 +2,10 @@ package eu.scasefp7.eclipse.umlrec.ui.wizard;
 
 import eu.scasefp7.eclipse.umlrec.UMLRecognizer;
 
+import java.util.List;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -39,17 +43,19 @@ public class PageTwo extends WizardNewFileCreationPage {
 	private Button checkbox;
 	
 	private int lineWidth=35;
+	private List<IProject> scaseProjectList;
 	
-	public PageTwo(IStructuredSelection selection) {
+	public PageTwo(IStructuredSelection selection, List<IProject> scaseProjectList) {
 		super("Wizard Page Two", selection);  //$NON-NLS-1$
 		setTitle(Messages.PageTwo_Title);
 		setDescription(Messages.PageTwo_Description);
-
+		this.scaseProjectList = scaseProjectList;
 	}
 
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
+		setFileExtension("uml");  // AZ - impose .uml as the file extension
 		Composite container = (Composite) getControl();
 		Button checkbox = new Button(container, SWT.CHECK);
 
@@ -67,8 +73,6 @@ public class PageTwo extends WizardNewFileCreationPage {
 			}
 
 		});
-
-		
 	}
 
 	@Override
@@ -280,7 +284,8 @@ public class PageTwo extends WizardNewFileCreationPage {
 	
 	
 	private boolean validateAdvanced(){
-		if(coverAreaThrText!=null && !coverAreaThrText.getText().isEmpty()){
+		// AZ - added isDisposed() checks to solve Bug #173
+		if(coverAreaThrText!=null && !coverAreaThrText.isDisposed() && !coverAreaThrText.getText().isEmpty()){
 			try {
 				coverAreaThr = Double.valueOf(coverAreaThrText.getText());
 				if(coverAreaThr<0 || coverAreaThr>100) throw new IllegalArgumentException();
@@ -289,7 +294,7 @@ public class PageTwo extends WizardNewFileCreationPage {
 				return false;
 			}
 		}
-		if(distNeighborObjectsText!=null && !distNeighborObjectsText.getText().isEmpty()){
+		if(distNeighborObjectsText!=null && !distNeighborObjectsText.isDisposed() && !distNeighborObjectsText.getText().isEmpty()){
 			try {
 				distNeighborObjects = Double.valueOf(distNeighborObjectsText.getText());
 				if(distNeighborObjects<0) throw new IllegalArgumentException();
@@ -298,7 +303,7 @@ public class PageTwo extends WizardNewFileCreationPage {
 				return false;
 			}
 		}
-		if(sizeRateText!=null && !sizeRateText.getText().isEmpty()){
+		if(sizeRateText!=null && !sizeRateText.isDisposed() && !sizeRateText.getText().isEmpty()){
 			try {
 				sizeRate = Double.valueOf(sizeRateText.getText());
 				if(sizeRate<0 || sizeRate>100) throw new IllegalArgumentException();
@@ -307,7 +312,7 @@ public class PageTwo extends WizardNewFileCreationPage {
 				return false;
 			}
 		}
-		if(threshText!=null && !threshText.getText().isEmpty()){
+		if(threshText!=null && !threshText.isDisposed() && !threshText.getText().isEmpty()){
 			try {
 				thresh = Integer.valueOf(threshText.getText());
 				if(thresh<0 || thresh>255) throw new IllegalArgumentException();
@@ -342,5 +347,20 @@ public class PageTwo extends WizardNewFileCreationPage {
 	public double getCoverAreaThr() {
 		return coverAreaThr;
 	}
-
+	
+	// AZ - validate page only if selected project is an S-CASE project
+	@Override
+	protected boolean validatePage() {
+		boolean superReturn = super.validatePage(),
+				pathFound = false;
+		IPath myPath = getContainerFullPath();
+		for (IProject ip : scaseProjectList) {
+			if (myPath == null) break;
+			if (myPath.lastSegment().equals(ip.getFullPath().lastSegment())) {
+				pathFound = true;
+				break;
+			}
+		}
+		return superReturn && pathFound;
+	}
 }

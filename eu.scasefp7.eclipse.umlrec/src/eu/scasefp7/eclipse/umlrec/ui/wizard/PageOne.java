@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.imgscalr.Scalr;
 
 import eu.scasefp7.eclipse.umlrec.ui.utils.ImageConverter;
@@ -115,6 +117,34 @@ public class PageOne extends WizardPage {
 		
 		setControl(container);
 
+	}
+	
+	// AZ - passes on to the second wizard page the name of the selected image file
+	//      as the suggested name for the .uml file
+	@Override
+	public IWizardPage getNextPage() {
+		IWizardPage returnPage = super.getNextPage();
+		
+		// AZ
+		if (returnPage instanceof WizardNewFileCreationPage) {
+			WizardNewFileCreationPage secondPage = (WizardNewFileCreationPage)returnPage;
+
+			String selectedFile = this.filePathText.getText();
+			if (selectedFile.lastIndexOf('.') >= 0) {
+				selectedFile = selectedFile.substring(0, selectedFile.lastIndexOf('.'));
+			}
+			
+			if (selectedFile.lastIndexOf('\\') >= 0 && selectedFile.lastIndexOf('\\') < selectedFile.length() - 1) {
+				selectedFile = selectedFile.substring(selectedFile.lastIndexOf('\\') + 1);
+			}
+			else if (selectedFile.lastIndexOf('/') >= 0 && selectedFile.lastIndexOf('/') < selectedFile.length() - 1) {
+				selectedFile = selectedFile.substring(selectedFile.lastIndexOf('/') + 1);
+			}
+		
+			secondPage.setFileName(selectedFile);
+		}
+		
+		return returnPage;
 	}
 	
 	private boolean validate(Composite container){
