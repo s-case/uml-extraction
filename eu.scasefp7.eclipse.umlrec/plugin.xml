@@ -108,5 +108,22 @@
             </command>
       </menuContribution>
    </extension>
+   <extension
+        point="eu.scasefp7.eclipse.core.ui.dashboardItem">
+		<group
+			id="eu.scasefp7.eclipse.core.ui.dashboard.groups.design"
+			appearsBefore="eu.scasefp7.eclipse.core.ui.dashboard.groups.mashup"
+			name="Design" />
+        <command
+        	  buttonId="eu.scasefp7.eclipse.core.ui.dashboard.buttons.importUML"
+              commandId="org.eclipse.ui.file.import"
+              groupId="eu.scasefp7.eclipse.core.ui.dashboard.groups.design"
+              label="Import UML diagram"
+              tooltip="Import UML diagram from an image">
+           <parameter 
+           		name="importWizardId" 
+              	value="eu.scasefp7.eclipse.umlrec.importWizard" />
+        </command>
+    </extension>
 
 </plugin>
