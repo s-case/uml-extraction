@@ -209,34 +209,6 @@
       <update label="S-CASE update site" url="http://s-case.github.io/s-case_update_site/"/>
    </url>
 
-   <requires>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.swt"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.filesystem"/>
-      <import plugin="eu.scasefp7.eclipse.core" version="1.0.0" match="compatible"/>
-      <import plugin="eu.scasefp7.eclipse.core.ui" version="1.2.0" match="compatible"/>
-      <import plugin="org.eclipse.papyrus.uml.tools" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.infra.gmfdiag.common" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.infra.core" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.infra.gmfdiag.commands" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.uml.diagram.wizards" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.uml.diagram.clazz" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.uml.diagram.common" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.uml.diagram.activity" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.uml.diagram.usecase" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.uml.diagram.statemachine" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.uml.diagram.menu" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.editor" version="1.0.2"/>
-      <import plugin="org.eclipse.papyrus.infra.gmfdiag.css" version="1.0.2"/>
-      <import plugin="org.eclipse.gmf.tooling.runtime" version="3.2.0"/>
-      <import plugin="org.eclipse.papyrus.infra.viewpoints.configuration.edit" version="1.0.2"/>
-      <import plugin="com.google.guava" version="15.0.0" match="greaterOrEqual"/>
-      <import plugin="eu.scasefp7.eclipse.umlrec" version="1.0.0" match="compatible"/>
-   </requires>
-
    <plugin
          id="eu.scasefp7.eclipse.umlrec"
          download-size="0"
