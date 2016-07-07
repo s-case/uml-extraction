@@ -24,7 +24,7 @@ public class UMLRecognizer {
 	protected String _fileName = null;
 
 	/** The UML Server url */
-	final String BASE_URI = "http://uml.scasefp7.com:8080/UMLServer/";
+	final String BASE_URI = "http://uml.scasefp7.com:8080/UMLServer/"; // TODO - get this from preferences
 	private Image image = new Image();
 	private String xmi;
 	private boolean isUseCase;
