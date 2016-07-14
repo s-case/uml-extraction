@@ -249,18 +249,20 @@ public class ActivityParser {
 	 * @return the list with the string values
 	 */
 	protected static ArrayList<String> substring(String s, ArrayList<String> list) {
-		int previousOccurance = 0;
-		int counter = 0;
-		for (int i = 0; i < s.length(); i++) {
-			if (s.charAt(i) == '_') {
-				counter++;
-				if (counter > 1 && previousOccurance < i) {
-					list.add(s.substring(previousOccurance, i - 1));
+		int startOfSubstring = 0;
+		char delimeter = ' ';
+		String trimmedS = s.trim();
+		for (int i = 0; i < trimmedS.length(); i++) {
+			if (trimmedS.charAt(i) == delimeter) {
+				if (!trimmedS.substring(startOfSubstring, i).isEmpty()) {
+					list.add(trimmedS.substring(startOfSubstring, i));
+				} else {
+					break;
 				}
-				previousOccurance = i;
+				startOfSubstring = i+1;
 			}
 		}
-		list.add(s.substring(previousOccurance, s.length()));
+		list.add(trimmedS.substring(startOfSubstring, trimmedS.length()));
 
 		return list;
 	}
@@ -454,6 +456,38 @@ public class ActivityParser {
 		}
 		xmiIsOk = actionNodesOk && finalNodeOk && initialNodeOk && decisionNodesOk && joinNodesOk && forkNodesOk && edgesOk;
 		return xmiIsOk;
+	}
+
+	public boolean checkParsedXmiForPapyrus() {
+		final Display disp = Display.getCurrent();
+		ArrayList<String> edgeIDsToDelete = new ArrayList<String>();
+		boolean edgesOk = true;
+		
+		for (int i=edges.size()-1; i >= 0; i--) {
+			if (edges.get(i).getSource().isEmpty() || edges.get(i).getTarget().isEmpty()) {
+				edgeIDsToDelete.add(edges.get(i).getId());
+				edges.remove(edges.get(i));
+			}			
+		}
+		if (!edgeIDsToDelete.isEmpty()) {
+			disp.syncExec(new Runnable() {
+				@Override
+				public void run() {
+					String deletedIDs = "";
+					boolean firstLine = true;
+					for (String id : edgeIDsToDelete) {
+						if (!firstLine)
+							deletedIDs += "\n";
+						else
+							firstLine = false;
+						deletedIDs += id;
+					}
+					MessageDialog.openInformation(disp.getActiveShell(), "Problematic edges found and removed",
+							"The edges with the following IDs were removed, as they were missing a source node, target node or both:\n" + deletedIDs);
+				}
+			});
+		}
+		return edgesOk;
 	}
 
 }

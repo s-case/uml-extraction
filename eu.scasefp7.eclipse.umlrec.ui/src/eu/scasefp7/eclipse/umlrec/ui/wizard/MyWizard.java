@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -20,13 +18,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.services.IServiceLocator;
-
 import eu.scasefp7.eclipse.umlrec.Activator;
 import eu.scasefp7.eclipse.umlrec.ui.jobs.FileEditorJob;
-import eu.scasefp7.eclipse.umlrec.ui.jobs.PapyrusExportJob;
 import eu.scasefp7.eclipse.umlrec.ui.jobs.UMLrecognizerJob;
 
 public class MyWizard extends Wizard implements IImportWizard{
@@ -35,32 +28,13 @@ public class MyWizard extends Wizard implements IImportWizard{
 	private PageTwo pageTwo;
 	private IStructuredSelection selection;
 	private List<IProject> sCASEProjectList;
-	private boolean papyrusPresent = false;
 	
 	public static String PLUGIN_ID = Activator.PLUGIN_ID;
 	
-	public MyWizard() {
-		super();
-		this.papyrusPresent  = checkForPapyrusCommand();
-	}
-
-	private boolean checkForPapyrusCommand() {
-        // Obtain IServiceLocator implementer, e.g. from PlatformUI.getWorkbench():
-        IServiceLocator serviceLocator = PlatformUI.getWorkbench();
-        // or a site from within a editor or view:
-        // IServiceLocator serviceLocator = getSite();
-
-        ICommandService commandService = (ICommandService)serviceLocator.getService(ICommandService.class);
-        
-        // Execute command via its ID
-        Command cmd = commandService.getCommand(PapyrusExportJob.PAPYRUS_COMMAND);
-        return cmd.isHandled();
-	}
-
     @Override
 	public void addPages() {
 		pageOne=new PageOne();
-		pageTwo=new PageTwo(selection, sCASEProjectList, this.papyrusPresent);
+		pageTwo=new PageTwo(selection, sCASEProjectList);
 		addPage(pageOne);	
 		addPage(pageTwo);
 	}
@@ -75,17 +49,9 @@ public class MyWizard extends Wizard implements IImportWizard{
 		        workspace.getRoot().getLocation().toOSString() + pageTwo.getContainerFullPath().toOSString() + File.separator + getRequirementsFolderName(pageTwo.getContainerFullPath()),
 				pageTwo.getFileName(), pageOne.getIsUseCase(), 
 				pageTwo.isShowImages(), pageTwo.getTresh(), pageTwo.getSizeRate(),
-				pageTwo.getDistNeigborObjects(), pageTwo.getCoverAreaThr());
+				pageTwo.getDistNeigborObjects(), pageTwo.getCoverAreaThr(), (IProject)selection.getFirstElement());
 		job.setRule(workspace.getRoot()); // TODO: Course locking of the workspace, use finer locking (file location?)
 		job.schedule();
-		
-		if(pageTwo.getExportPapyrusModel()) {
-		    IPath filePath = pageTwo.getContainerFullPath().append(pageTwo.getFileName());
-		    IFile file = workspace.getRoot().getFile(filePath);
-		    PapyrusExportJob pjob = new PapyrusExportJob(file);
-    		pjob.setRule(workspace.getRoot());
-    		pjob.schedule();
-		}
 		
 		if(pageTwo.getIsChecked()){
 		    FileEditorJob job2;

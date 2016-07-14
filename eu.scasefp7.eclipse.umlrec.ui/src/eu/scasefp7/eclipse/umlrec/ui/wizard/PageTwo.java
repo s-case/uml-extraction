@@ -26,7 +26,6 @@ import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 public class PageTwo extends WizardNewFileCreationPage {
 
 	private boolean isChecked = false;
-	private boolean exportPapyrus = false;
 	private boolean isShowImages = UMLRecognizer.SHOW_IMAGES;
 	private int thresh = UMLRecognizer.THRESH;
 	private double sizeRate = UMLRecognizer.SIZE_RATE;
@@ -44,56 +43,38 @@ public class PageTwo extends WizardNewFileCreationPage {
 	private Button checkbox;
 	
 	private int lineWidth=35;
-	private boolean showPapyrusCheck = false;
 	private List<IProject> scaseProjectList;
 	
-	public PageTwo(IStructuredSelection selection, List<IProject> scaseProjectList, boolean showPapyrusCheck) {
+	public PageTwo(IStructuredSelection selection, List<IProject> scaseProjectList) {
 		super("Wizard Page Two", selection);  //$NON-NLS-1$
 		setTitle(Messages.PageTwo_Title);
 		setDescription(Messages.PageTwo_Description);
 		this.scaseProjectList = scaseProjectList;
-		this.showPapyrusCheck = showPapyrusCheck;
 	}
 
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		setFileExtension("uml");  // AZ - impose .uml as the file extension
+
 		Composite container = (Composite) getControl();
 		Button checkbox = new Button(container, SWT.CHECK);
-
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
-		gd.horizontalSpan = 2;
 
+		gd.horizontalSpan = 2;
 		checkbox.setText(Messages.PageTwo_Checkbox);
 		checkbox.setLayoutData(gd);
-
 		checkbox.addSelectionListener(new SelectionAdapter() {
-
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 isChecked = !isChecked;
             }
-
         });
-		
-		if(this.showPapyrusCheck) {		    
-            Button chkExportPapyrusModel = new Button(container, SWT.CHECK);
-    
-            GridData gd2 = new GridData(SWT.FILL, SWT.FILL, true, false);
-            gd2.horizontalSpan = 2;
-    		
-            chkExportPapyrusModel.setText(Messages.PageTwo_ExportPapyrusModel);
-            chkExportPapyrusModel.setLayoutData(gd2);
-    		
-            chkExportPapyrusModel.addSelectionListener(new SelectionAdapter() {
-    
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    exportPapyrus = !exportPapyrus;
-                }
 
-            });
+		if(WizardUtilities.papyrusCommandExists()) {		    
+			checkbox.setVisible(false);
+			setFileExtension("di");  // AZ - if papyrus plugin is present, impose .di as the file extension
+		} else {
+			setFileExtension("uml");  //  otherwise, impose .uml
 		}
 	}
 
@@ -354,10 +335,6 @@ public class PageTwo extends WizardNewFileCreationPage {
 		return isShowImages;
 	}
 
-	public boolean getExportPapyrusModel() {
-	    return exportPapyrus;
-	}
-	
 	public int getTresh() {
 		return thresh;
 	}

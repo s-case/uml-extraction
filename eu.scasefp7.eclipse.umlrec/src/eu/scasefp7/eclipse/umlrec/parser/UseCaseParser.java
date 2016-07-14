@@ -173,6 +173,38 @@ public class UseCaseParser {
 		return xmiIsOk;
 	}
 
+	public boolean checkParsedXmiForPapyrus() {
+		final Display disp = Display.getCurrent();
+		ArrayList<String> edgeIDsToDelete = new ArrayList<String>();
+		boolean edgesOk = true;
+		
+		for (int i=edges.size()-1; i >= 0; i--) {
+			if (edges.get(i).getSource().isEmpty() || edges.get(i).getTarget().isEmpty()) {
+				edgeIDsToDelete.add(edges.get(i).getId());
+				edges.remove(edges.get(i));
+			}			
+		}
+		if (!edgeIDsToDelete.isEmpty()) {
+			disp.syncExec(new Runnable() {
+				@Override
+				public void run() {
+					String deletedIDs = "";
+					boolean firstLine = true;
+					for (String id : edgeIDsToDelete) {
+						if (!firstLine)
+							deletedIDs += "\n";
+						else
+							firstLine = false;
+						deletedIDs += id;
+					}
+					MessageDialog.openInformation(disp.getActiveShell(), "Problematic edges found and removed",
+							"The edges with the following IDs were removed, as they were missing a source node, target node or both:\n" + deletedIDs);
+				}
+			});
+		}
+		return edgesOk;
+	}
+	
 	/**
 	 * 
 	 * @return the diagram's type

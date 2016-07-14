@@ -17,11 +17,15 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -36,10 +40,12 @@ public class PapyrusExportJob extends WorkbenchJob {
     public static String PAPYRUS_COMMAND = "eu.scasefp7.eclipse.umlrec.ui.commands.convertToPapyrus"; //$NON-NLS-1$   
 
 	private IFile file;
+	private File umlFile; // the intermediate UML file created by UMLRecognizerJob
 	
-	public PapyrusExportJob(IFile file) {
+	public PapyrusExportJob(IFile file, File umlFile) {
 		super(Messages.PapyrusExportJobDescription);
-		this.file=file;
+		this.file = file;
+		this.umlFile = umlFile;
 	}
 	
 	@Override
@@ -60,6 +66,22 @@ public class PapyrusExportJob extends WorkbenchJob {
 
 	}
 
+	@Override
+	public void performDone(IJobChangeEvent event) {
+//	********** Uncomment if deletion of initial uml file (with incorrect xmi) is desired **********
+//		
+//		
+//		ILog log = Platform.getLog(Platform.getBundle(MyWizard.PLUGIN_ID));
+//		umlFile.delete();
+//		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+//		
+//		try {
+//			workspace.getRoot().refreshLocal(org.eclipse.core.resources.IFolder.DEPTH_INFINITE,null);
+//		} catch (CoreException e) {
+//			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, e.getMessage()));
+//		}
+	}
+	
 	/**
      * Convenience method to call a command with parameters.
      * 

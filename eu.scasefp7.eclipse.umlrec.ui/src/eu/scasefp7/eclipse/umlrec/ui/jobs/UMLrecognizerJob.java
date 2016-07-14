@@ -6,6 +6,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -13,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
@@ -21,6 +24,7 @@ import eu.scasefp7.eclipse.umlrec.RecognitionException;
 import eu.scasefp7.eclipse.umlrec.UMLRecognizer;
 import eu.scasefp7.eclipse.umlrec.ui.wizard.Messages;
 import eu.scasefp7.eclipse.umlrec.ui.wizard.MyWizard;
+import eu.scasefp7.eclipse.umlrec.ui.wizard.WizardUtilities;
 
 public class UMLrecognizerJob extends WorkspaceJob {
 
@@ -33,8 +37,9 @@ public class UMLrecognizerJob extends WorkspaceJob {
 	private double sizeRate;
 	private double distNeighborObjects;
 	private double coverAreaThreshold;
+	private IProject project;
 
-	public UMLrecognizerJob(String srcFilePath, String saveDestPath, String destFileName, boolean isUseCase, boolean showImages, int threshold, double sizeRate, double distNeighborObjects, double coverAreaThreshold) {
+	public UMLrecognizerJob(String srcFilePath, String saveDestPath, String destFileName, boolean isUseCase, boolean showImages, int threshold, double sizeRate, double distNeighborObjects, double coverAreaThreshold, IProject project) {
 		super(Messages.UMLrecognizerJob_UMLrecognizerJobName); 
 		this.srcFilePath=srcFilePath;
 		this.saveDestPath=saveDestPath;
@@ -45,6 +50,7 @@ public class UMLrecognizerJob extends WorkspaceJob {
 		this.sizeRate = sizeRate;
 		this.distNeighborObjects = distNeighborObjects;
 		this.coverAreaThreshold = coverAreaThreshold;
+		this.project = project;
 	}
 
 	@Override
@@ -108,14 +114,25 @@ public class UMLrecognizerJob extends WorkspaceJob {
 			return Status.OK_STATUS;
 		}
 		monitor.done();
+		
+		File umlFile = writeInFile(content, log);
+		if (WizardUtilities.papyrusCommandExists()) {
+			createPapyrusFile(umlFile);
 
-		writeInFile(content, log);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			try {
+				workspace.getRoot().refreshLocal(org.eclipse.core.resources.IFolder.DEPTH_INFINITE,null);
+			} catch (CoreException e) {
+				log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, e.getMessage()));
+			}
+		}
 	
 		return Status.OK_STATUS;
 	}
 
-	private void writeInFile(String content, ILog log) {
-		File fileToOpen = new File(saveDestPath+File.separator+destFileName);
+	private File writeInFile(String content, ILog log) {
+		String umlDestFilename = destFileName.substring(destFileName.lastIndexOf('.')) == ".uml" ? destFileName : destFileName.substring(0, destFileName.lastIndexOf('.')) + ".uml";
+		File fileToOpen = new File(saveDestPath+File.separator+umlDestFilename);
 		try {
 			if(!fileToOpen.exists()){
 				fileToOpen.createNewFile();	
@@ -138,7 +155,14 @@ public class UMLrecognizerJob extends WorkspaceJob {
 		} catch (CoreException e) {
 			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, e.getMessage()));
 		}
-		
+		return fileToOpen;
 	}
 
+	private void createPapyrusFile(File umlFile) {
+		IFile file = project.getFile(new Path(saveDestPath.substring(saveDestPath.lastIndexOf(File.separatorChar))+File.separator+destFileName.substring(0, destFileName.lastIndexOf('.'))+".uml"));
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+	    PapyrusExportJob pjob = new PapyrusExportJob(file, umlFile);
+		pjob.setRule(workspace.getRoot());
+		pjob.schedule();
+	}
 }

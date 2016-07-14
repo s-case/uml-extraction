@@ -56,7 +56,9 @@ public class PapyrusGenerator {
     // ===========================================================
 	
 	private String projectName;
+	private String folderName;
 	private String modelName;
+	private String tempModelName;
 	private String sourceUMLPath;
 	private String sourceUMLType;
 	private List<XMIActivityNode> sourceUMLActivityNodes = new ArrayList<XMIActivityNode>();
@@ -75,6 +77,7 @@ public class PapyrusGenerator {
 	 */
 	public PapyrusGenerator(IFile sourceUML, Class<? extends AbstractPapyrusModelManager> manager) {
 		this.projectName = sourceUML.getProject().getName();
+		this.folderName = sourceUML.getParent().getName();
 		this.modelName = FileUtils.getFileNameWithOutExtension(sourceUML);
 		this.sourceUMLPath = sourceUML.getRawLocationURI().toString();
 		this.parseSourceUML(sourceUML);
@@ -111,7 +114,7 @@ public class PapyrusGenerator {
 //						ArrayList<XMIEdge> edgesWithCondition = parser.getEdgesWithCondition();
 //						ArrayList<XMIEdge> edgesWithoutCondition = parser.getEdgesWithoutCondition();
 						
-						if (parser.checkParsedXmi()) {
+						if (parser.checkParsedXmiForPapyrus()) {
 							setSourceUMLActivityNodes(nodes);
 							setSourceUMLEdges(edges);
 						}
@@ -124,7 +127,7 @@ public class PapyrusGenerator {
 						ArrayList<XMIEdge> edges = parser.getEdges();
 						ArrayList<XMIUseCaseNode> nodes = parser.getNodes();
 						
-						if (parser.checkParsedXmi(false)) {
+						if (parser.checkParsedXmiForPapyrus()) {
 							setSourceUMLUseCaseNodes(nodes);
 							setSourceUMLEdges(edges);
 						}
@@ -348,8 +351,9 @@ public class PapyrusGenerator {
 			DOMSource source = new DOMSource(doc);
 			
 			String sourceUMLFolder = new Path(new Path(sourceUMLPath).toFile().getParent().toString()).toString();
-			String newModelName = modelName +"_model";
-			String newSourceUMLPath = sourceUMLFolder + "/" + newModelName +".uml";
+			String newModelName = modelName + "_model";
+			tempModelName = modelName + "_model_temp";
+			String newSourceUMLPath = sourceUMLFolder + "/" + tempModelName +".uml";
 			File f = new File(newSourceUMLPath.replace("file:", ""));
 			StreamResult result = new StreamResult(f);
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -450,7 +454,12 @@ public class PapyrusGenerator {
 	 */
 	private void createAndOpenPapyrusModel(IProgressMonitor monitor) throws ModelMultiException, ServiceException {
 		monitor.beginTask("Generating Papyrus Model", 100);
-		PapyrusModelCreator papyrusModelCreator = new PapyrusModelCreator(projectName + "/" + modelName);
+		PapyrusModelCreator papyrusModelCreator;
+		if (projectName.equals(folderName)) {
+			papyrusModelCreator = new PapyrusModelCreator(projectName + "/" + modelName);
+		} else {
+			papyrusModelCreator = new PapyrusModelCreator(projectName + "/" + folderName + "/" + modelName);
+		}
 		papyrusModelCreator.setUpUML(sourceUMLPath);
 		if(!papyrusModelCreator.diExists()){
 			
@@ -602,7 +611,9 @@ public class PapyrusGenerator {
 		SettingsRegistry.clear();
 		
 		monitor.subTask("Cleaning up");
-		FileUtils.deleteFile(java.nio.file.Paths.get(sourceUMLPath.replace("file:/", "")));
+		String filenameToDelete = sourceUMLPath.replace("file:/", "");
+		filenameToDelete = filenameToDelete.substring(0, filenameToDelete.lastIndexOf('/'))+"/"+tempModelName+".uml";
+		FileUtils.deleteFile(java.nio.file.Paths.get(filenameToDelete));
 		monitor.worked(100);
 		
 		return Status.OK_STATUS;
