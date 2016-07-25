@@ -1,5 +1,6 @@
 package eu.scasefp7.eclipse.umlrec.ui.jobs;
 
+import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +41,8 @@ public class PapyrusExportJob extends WorkbenchJob {
     public static String PAPYRUS_COMMAND = "eu.scasefp7.eclipse.umlrec.ui.commands.convertToPapyrus"; //$NON-NLS-1$   
 
 	private IFile file;
-	private File umlFile; // the intermediate UML file created by UMLRecognizerJob
+	private File umlFile; // the intermediate UML file created by UMLRecognizerJob, included here just to have the capability of deleting it in performDone()
+						  // However, as is, this file SHOULD NOT be deleted. This variable should be removed in the near future.
 	
 	public PapyrusExportJob(IFile file, File umlFile) {
 		super(Messages.PapyrusExportJobDescription);
@@ -68,8 +70,8 @@ public class PapyrusExportJob extends WorkbenchJob {
 
 	@Override
 	public void performDone(IJobChangeEvent event) {
-//	********** Uncomment if deletion of initial uml file (with incorrect xmi) is desired **********
-//		
+//  ***************** The initial uml file is essential now,
+//	***************** so this code should NOT be uncommented and should be removed in the near future
 //		
 //		ILog log = Platform.getLog(Platform.getBundle(MyWizard.PLUGIN_ID));
 //		umlFile.delete();

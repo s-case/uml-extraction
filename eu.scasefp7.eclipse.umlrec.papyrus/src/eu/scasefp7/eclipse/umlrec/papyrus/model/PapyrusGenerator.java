@@ -55,11 +55,12 @@ public class PapyrusGenerator {
     // Private Fields
     // ===========================================================
 	
+	private IFile sourceUML;
 	private String projectName;
 	private String folderName;
-	private String modelName;
-	private String tempModelName;
-	private String sourceUMLPath;
+	private String sourceUMLModelName;
+	private String tempUMLModelName;
+	private String sourceUMLModelPath;
 	private String sourceUMLType;
 	private List<XMIActivityNode> sourceUMLActivityNodes = new ArrayList<XMIActivityNode>();
 	private List<XMIUseCaseNode> sourceUMLUseCaseNodes = new ArrayList<XMIUseCaseNode>();
@@ -73,22 +74,41 @@ public class PapyrusGenerator {
 	
 	/**
 	 * The constructor
-	 * @param sourceUML - The Eclipse UML2 model 
+	 * @param sourceUML - The Eclipse UML2 model (wrong xmi)
 	 */
-	public PapyrusGenerator(IFile sourceUML, Class<? extends AbstractPapyrusModelManager> manager) {
+	public PapyrusGenerator(IFile sourceUML, Class<? extends AbstractPapyrusModelManager> manager, Map<String,Point> layoutController) {
+		this.sourceUML = sourceUML;
 		this.projectName = sourceUML.getProject().getName();
 		this.folderName = sourceUML.getParent().getName();
-		this.modelName = FileUtils.getFileNameWithOutExtension(sourceUML);
-		this.sourceUMLPath = sourceUML.getRawLocationURI().toString();
-		this.parseSourceUML(sourceUML);
-		this.makeSourceUMLPapyrusCompliant();
+		this.sourceUMLModelName = FileUtils.getFileNameWithOutExtension(sourceUML);
+		this.sourceUMLModelPath = sourceUML.getRawLocationURI().toString();
 		SettingsRegistry.setPapyrusModelManager(manager);
+		if (layoutController != null) {
+			this.layoutController = layoutController;
+		}
 	}
 	
 	// ===========================================================
     // Private Methods
     // ===========================================================
 	
+	private void parseSourceUMLTypeFromFile(IFile file) {
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(file.getContents());
+	
+			Element root = doc.getDocumentElement();
+			Node packagedElement = root.getFirstChild().getNextSibling();
+			if (packagedElement.getNodeType() == Node.ELEMENT_NODE) {
+				Element eElement = (Element) packagedElement;
+				sourceUMLType = eElement.getAttribute("xmi:type");
+			}
+		} catch (ParserConfigurationException | SAXException | IOException | CoreException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
 	/**
 	 * Parses the source UML file reading its edges and nodes.
 	 * @param file an {@link IFile} instance of a UML file.
@@ -212,7 +232,7 @@ public class PapyrusGenerator {
 					String nodeId = node.getId();
 					nodeElement.setAttribute("xmi:id", nodeId);
 					String nodeName = node.getName();
-					if(nodeName!=null && nodeName.isEmpty()==false){
+					if(nodeName!=null && !nodeName.isEmpty()){
 						nodeElement.setAttribute("name", nodeName);
 					}
 					
@@ -220,7 +240,7 @@ public class PapyrusGenerator {
 					nodeElement.setAttribute("outgoing",getNodeOutgoingEdgeIds(nodeId, node.getOutgoing()));
 					
 					List<Point> coordinates = node.getCoordinates();
-					if(coordinates!=null && coordinates.isEmpty()==false  && coordinates.get(0)!=null) {
+					if(coordinates!=null && !coordinates.isEmpty()  && coordinates.get(0)!=null) {
 						Point nodePoint = coordinates.get(0);
 						layoutController.put(nodeId, nodePoint);
 					}
@@ -350,18 +370,18 @@ public class PapyrusGenerator {
 			Transformer transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
 			
-			String sourceUMLFolder = new Path(new Path(sourceUMLPath).toFile().getParent().toString()).toString();
-			String newModelName = modelName + "_model";
-			tempModelName = modelName + "_model_temp";
-			String newSourceUMLPath = sourceUMLFolder + "/" + tempModelName +".uml";
-			File f = new File(newSourceUMLPath.replace("file:", ""));
+			String sourceUMLModelFolder = new Path(new Path(sourceUMLModelPath).toFile().getParent().toString()).toString();
+			String newUMLModelName = sourceUMLModelName + "_model";
+			tempUMLModelName = sourceUMLModelName + "_model_temp";
+			String tempUMLModelPath = sourceUMLModelFolder + "/" + tempUMLModelName +".uml";
+			File f = new File(tempUMLModelPath.replace("file:", ""));
 			StreamResult result = new StreamResult(f);
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 			transformer.transform(source, result);
 			
-			setModelName(newModelName);
-			setSourceUMLPath(newSourceUMLPath);
+			setModelName(newUMLModelName);
+			setSourceUMLPath(tempUMLModelPath);
 		} catch (ParserConfigurationException | TransformerException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -456,11 +476,11 @@ public class PapyrusGenerator {
 		monitor.beginTask("Generating Papyrus Model", 100);
 		PapyrusModelCreator papyrusModelCreator;
 		if (projectName.equals(folderName)) {
-			papyrusModelCreator = new PapyrusModelCreator(projectName + "/" + modelName);
+			papyrusModelCreator = new PapyrusModelCreator(projectName + "/" + sourceUMLModelName);
 		} else {
-			papyrusModelCreator = new PapyrusModelCreator(projectName + "/" + folderName + "/" + modelName);
+			papyrusModelCreator = new PapyrusModelCreator(projectName + "/" + folderName + "/" + sourceUMLModelName);
 		}
-		papyrusModelCreator.setUpUML(sourceUMLPath);
+		papyrusModelCreator.setUpUML(sourceUMLModelPath);
 		if(!papyrusModelCreator.diExists()){
 			
 			monitor.subTask("Generating Papyrus model...");
@@ -497,28 +517,28 @@ public class PapyrusGenerator {
 	 * @return the modelName
 	 */
 	public String getModelName() {
-		return modelName;
+		return sourceUMLModelName;
 	}
 
 	/**
 	 * @param modelName the modelName to set
 	 */
 	public void setModelName(String modelName) {
-		this.modelName = modelName;
+		this.sourceUMLModelName = modelName;
 	}
 
 	/**
 	 * @return the sourceUMLPath
 	 */
 	public String getSourceUMLPath() {
-		return sourceUMLPath;
+		return sourceUMLModelPath;
 	}
 
 	/**
 	 * @param sourceUMLPath the sourceUMLPath to set
 	 */
 	public void setSourceUMLPath(String sourceUMLPath) {
-		this.sourceUMLPath = sourceUMLPath;
+		this.sourceUMLModelPath = sourceUMLPath;
 	}
 	
 	/**
@@ -598,7 +618,7 @@ public class PapyrusGenerator {
 		IProject project = ProjectUtils.createProject(projectName);
 		ProjectUtils.openProject(project);
 		monitor.worked(20);
-		
+		parseSourceUMLTypeFromFile(sourceUML);
 		if(sourceUMLType.equalsIgnoreCase("uml:Activity")) {
 			PreferencesManager.setValue(PreferencesManager.ACTIVITY_DIAGRAM_PREF, true);
 			PreferencesManager.setValue(PreferencesManager.USE_CASE_DIAGRAM_PREF, false);
@@ -609,11 +629,7 @@ public class PapyrusGenerator {
 		}
 		createAndOpenPapyrusModel(new SubProgressMonitor(monitor, 80));
 		SettingsRegistry.clear();
-		
-		monitor.subTask("Cleaning up");
-		String filenameToDelete = sourceUMLPath.replace("file:/", "");
-		filenameToDelete = filenameToDelete.substring(0, filenameToDelete.lastIndexOf('/'))+"/"+tempModelName+".uml";
-		FileUtils.deleteFile(java.nio.file.Paths.get(filenameToDelete));
+
 		monitor.worked(100);
 		
 		return Status.OK_STATUS;

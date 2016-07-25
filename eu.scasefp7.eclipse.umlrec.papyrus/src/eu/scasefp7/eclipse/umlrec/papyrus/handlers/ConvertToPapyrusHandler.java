@@ -1,9 +1,11 @@
 package eu.scasefp7.eclipse.umlrec.papyrus.handlers;
 
+import java.awt.Point;
 //import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 //import java.util.ArrayList;
 //import java.util.List;
+import java.util.Map;
 
 //import javax.xml.parsers.DocumentBuilder;
 //import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,10 +41,7 @@ import org.eclipse.ui.progress.IProgressService;
 //import org.w3c.dom.Node;
 //import org.xml.sax.SAXException;
 
-
-
-
-
+import eu.scasefp7.eclipse.umlrec.UMLRecognizer;
 import eu.scasefp7.eclipse.umlrec.papyrus.model.PapyrusGenerator;
 import eu.scasefp7.eclipse.umlrec.papyrus.modelmanagers.DefaultPapyrusModelManager;
 import eu.scasefp7.eclipse.umlrec.papyrus.utils.DialogUtils;
@@ -73,7 +72,7 @@ public class ConvertToPapyrusHandler extends AbstractHandler{
 	    
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		
-		PapyrusGenerator pg = new PapyrusGenerator(file, DefaultPapyrusModelManager.class);
+		PapyrusGenerator pg = new PapyrusGenerator(file, DefaultPapyrusModelManager.class, UMLRecognizer.getLayoutController());
 		try {
 			progressService.runInUI(progressService, new IRunnableWithProgress() {
 				@Override

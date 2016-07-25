@@ -116,6 +116,8 @@ public class PapyrusModelCreator {
 	 * @param sourceUMLPath - The path of the source .uml File
 	 */
 	private void setUpUMLFile(String sourceUMLPath){
+		// We copy the temporary uml file (specified by sourceUMLPath) to a new file (umlFile),
+		// which will be part of the papyrus model
 		copyFile(sourceUMLPath, umlFile);
 
 		Model m = getUmlModel();

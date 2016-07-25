@@ -44,12 +44,13 @@ public class MyWizard extends Wizard implements IImportWizard{
 		
 		System.out.println(pageTwo.getTresh());
 		
+		IProject selectedProject = (IProject)((org.eclipse.jface.viewers.TreeSelection)selection).getPaths()[0].getFirstSegment();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		UMLrecognizerJob job = new UMLrecognizerJob(pageOne.getFilePath(),
 		        workspace.getRoot().getLocation().toOSString() + pageTwo.getContainerFullPath().toOSString() + File.separator + getRequirementsFolderName(pageTwo.getContainerFullPath()),
 				pageTwo.getFileName(), pageOne.getIsUseCase(), 
 				pageTwo.isShowImages(), pageTwo.getTresh(), pageTwo.getSizeRate(),
-				pageTwo.getDistNeigborObjects(), pageTwo.getCoverAreaThr(), (IProject)selection.getFirstElement());
+				pageTwo.getDistNeigborObjects(), pageTwo.getCoverAreaThr(), selectedProject);
 		job.setRule(workspace.getRoot()); // TODO: Course locking of the workspace, use finer locking (file location?)
 		job.schedule();
 		

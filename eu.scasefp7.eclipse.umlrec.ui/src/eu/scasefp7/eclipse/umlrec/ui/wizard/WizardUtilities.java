@@ -8,7 +8,7 @@ import org.eclipse.ui.services.IServiceLocator;
 import eu.scasefp7.eclipse.umlrec.ui.jobs.PapyrusExportJob;
 
 public class WizardUtilities {
-	
+
 	public static boolean papyrusCommandExists() {
         // Obtain IServiceLocator implementer, e.g. from PlatformUI.getWorkbench():
         IServiceLocator serviceLocator = PlatformUI.getWorkbench();
@@ -21,5 +21,5 @@ public class WizardUtilities {
         Command cmd = commandService.getCommand(PapyrusExportJob.PAPYRUS_COMMAND);
         return cmd.isHandled();
 	}
-	
+
 }
