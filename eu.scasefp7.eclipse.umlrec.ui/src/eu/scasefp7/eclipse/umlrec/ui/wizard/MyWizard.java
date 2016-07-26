@@ -18,6 +18,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+
+import eu.scasefp7.eclipse.core.builder.ProjectUtils;
 import eu.scasefp7.eclipse.umlrec.Activator;
 import eu.scasefp7.eclipse.umlrec.ui.jobs.FileEditorJob;
 import eu.scasefp7.eclipse.umlrec.ui.jobs.UMLrecognizerJob;
@@ -104,26 +106,18 @@ public class MyWizard extends Wizard implements IImportWizard{
 			}
 		}
 		if (project != null) {
-	        try {
-	        	folderName = project.getPersistentProperty(new QualifiedName("", "eu.scasefp7.eclipse.core.ui.rqsFolder"));
-	        	if (folderName == null || folderName.isEmpty()) {
-	        		IFolder requirements = project.getFolder("requirements");
-	        		IProgressMonitor monitor = new NullProgressMonitor();
-					try {
-						requirements.create(true, true, monitor);
-					} catch (CoreException e) {
-					    Activator.log("Unable to create project folders.", e);
-					}
-					try {
-						project.setPersistentProperty(new QualifiedName("", "eu.scasefp7.eclipse.core.ui.rqsFolder"), requirements.getProjectRelativePath().toPortableString());
-					} catch (CoreException e) {
-						Activator.log("Unable to set project properties.", e);
-					}
-	        		folderName = "requirements";
-	        	}
-	        } catch (Exception e) {
-				Activator.log("Unable to get project property: eu.scasefp7.eclipse.core.ui.rqsFolder. Project does not exist, is not local or is not open.", e);
-	        }
+            folderName = ProjectUtils.getProjectRequirementsPath(project);
+        	if (folderName == null || folderName.isEmpty()) {
+        	    folderName = "requirements";
+        		IFolder requirements = project.getFolder(folderName);
+        		IProgressMonitor monitor = new NullProgressMonitor();
+				try {
+					requirements.create(true, true, monitor);
+				} catch (CoreException e) {
+				    Activator.log("Unable to create project folders.", e);
+				}
+				ProjectUtils.setProjectRequirementsPath(project, requirements.getProjectRelativePath().toPortableString());	
+        	}
 		}
         
         return folderName;
