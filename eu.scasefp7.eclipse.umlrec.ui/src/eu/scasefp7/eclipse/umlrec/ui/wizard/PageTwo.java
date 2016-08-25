@@ -41,15 +41,17 @@ public class PageTwo extends WizardNewFileCreationPage {
 	private Text distNeighborObjectsText;
 	private Text coverAreaThrText;
 	private Button checkbox;
+	private MyWizard wizard;
 	
 	private int lineWidth=35;
 	private List<IProject> scaseProjectList;
 	
-	public PageTwo(IStructuredSelection selection, List<IProject> scaseProjectList) {
+	public PageTwo(IStructuredSelection selection, List<IProject> scaseProjectList, MyWizard wizard) {
 		super("Wizard Page Two", selection);  //$NON-NLS-1$
 		setTitle(Messages.PageTwo_Title);
 		setDescription(Messages.PageTwo_Description);
 		this.scaseProjectList = scaseProjectList;
+		this.wizard = wizard;
 	}
 
 	@Override
@@ -360,6 +362,7 @@ public class PageTwo extends WizardNewFileCreationPage {
 		for (IProject ip : scaseProjectList) {
 			if (myPath == null) break;
 			if (myPath.lastSegment().equals(ip.getFullPath().lastSegment())) {
+				wizard.setSelectedProject(ip);
 				pathFound = true;
 				break;
 			}

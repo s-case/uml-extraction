@@ -71,7 +71,7 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 	 * @param file the file of which the XML document is returned.
 	 * @return the XML document of the file, or null if there is a parsing error.
 	 */
-	private Document getXMIDocOfFile(IFile file) {
+	protected Document getXMIDocOfFile(IFile file) {
 		Document doc = null;
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -91,21 +91,28 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 	 * @return the diagram type of the given file, either "UseCaseDiagram" or "ActivityDiagram" (or "Error" if there is
 	 *         a parsing error).
 	 */
-	protected String getDiagramType(IFile file) {
-		Document doc = getXMIDocOfFile(file);
-		if (doc != null) {
-			Node root = doc.getDocumentElement();
-			Node packagedElement = root.getFirstChild().getNextSibling();
+	protected String getDiagramType(Document doc) {
+		String sourceUMLType = "Error";
+		
+		Element root = doc.getDocumentElement();
+		Node packagedElement = root.getFirstChild().getNextSibling();
+		while (packagedElement != null) {
 			if (packagedElement.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) packagedElement;
-				String type = eElement.getAttribute("xmi:type");
-				if (type.equalsIgnoreCase("uml:Use Case"))
-					return "UseCaseDiagram";
-				else if (type.equalsIgnoreCase("uml:Activity"))
-					return "ActivityDiagram";
+				String xmiType = eElement.getAttribute("xmi:type");
+				if (xmiType.equalsIgnoreCase("uml:UseCase") || xmiType.equalsIgnoreCase("uml:Actor")) {
+					sourceUMLType = "UseCaseDiagram";
+					break;
+				}
+				else if (xmiType.equalsIgnoreCase("uml:Activity")) {
+					sourceUMLType = "ActivityDiagram";
+					break;
+				}
 			}
+			packagedElement = packagedElement.getNextSibling();
 		}
-		return "Error";
+
+		return sourceUMLType;
 	}
 
 	/**
@@ -116,15 +123,15 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 	protected void instantiateOntology(IFile file) {
 		Document doc = getXMIDocOfFile(file);
 		if (doc != null) {
-			String diagramType = getDiagramType(file);
+			String diagramType = getDiagramType(doc);
 			System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
 			if (diagramType.equals("ActivityDiagram")) {
 				DynamicOntologyAPI ontology = new DynamicOntologyAPI(file.getProject());
-				instantiateDynamicOntology(file, ontology);
+				instantiateDynamicOntology(doc, file, ontology);
 				ontology.close();
 			} else if (diagramType.equals("UseCaseDiagram")) {
 				StaticOntologyAPI ontology = new StaticOntologyAPI(file.getProject());
-				instantiateStaticOntology(file, ontology);
+				instantiateStaticOntology(doc, file, ontology);
 				ontology.close();
 			}
 		}
@@ -136,17 +143,16 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 	 * @param file an {@link IFile} instance of a UML Use Case diagram.
 	 * @param ontology the static ontology instance to be instantiated.
 	 */
-	protected void instantiateStaticOntology(IFile file, StaticOntologyAPI ontology) {
-		Document doc = getXMIDocOfFile(file);
+	protected void instantiateStaticOntology(Document doc, IFile file, StaticOntologyAPI ontology) {
 		String filename = file.getName();
 		String diagramName = filename.substring(0, filename.lastIndexOf('.'));
 		diagramName = "UCD_" + diagramName.substring(diagramName.lastIndexOf('\\') + 1);
 		ontology.addRequirement(diagramName);
 		UseCaseParser parser = new UseCaseParser();
-		parser.Parsexmi(doc);
+		parser.parsePapyrusXMI(doc);
 		ArrayList<XMIEdge> edges = parser.getEdges();
 		ArrayList<XMIUseCaseNode> nodes = parser.getNodes();
-		if (parser.checkParsedXmi(false)) {
+		if (parser.checkParsedXmi(false, diagramName)) {
 			WriteStaticOntology.modifyOntology(edges, nodes, ontology, diagramName);
 		}
 	}
@@ -157,14 +163,13 @@ public class ExportToOntologyHandler extends ProjectAwareHandler {
 	 * @param file an {@link IFile} instance of a UML Activity diagram.
 	 * @param ontology the dynamic ontology instance to be instantiated.
 	 */
-	protected void instantiateDynamicOntology(IFile file, DynamicOntologyAPI ontology) {
-		Document doc = getXMIDocOfFile(file);
+	protected void instantiateDynamicOntology(Document doc, IFile file, DynamicOntologyAPI ontology) {
 		String filename = file.getName();
 		String diagramName = filename.substring(0, filename.lastIndexOf('.'));
 		diagramName = "ACD_" + diagramName.substring(diagramName.lastIndexOf('\\') + 1);
 		ontology.addActivityDiagram(diagramName);
 		ActivityParser parser = new ActivityParser();
-		parser.Parsexmi(doc);
+		parser.parsePapyrusXMI(doc);
 		ArrayList<XMIEdge> edgesWithCondition = parser.getEdgesWithCondition();
 		ArrayList<XMIEdge> edgesWithoutCondition = parser.getEdgesWithoutCondition();
 		ArrayList<XMIEdge> edges = parser.getEdges();

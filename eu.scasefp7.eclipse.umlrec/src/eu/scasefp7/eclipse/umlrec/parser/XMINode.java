@@ -7,16 +7,19 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Element;
+
 /**
  * @author tsirelis
  *
  */
 public class XMINode {
-	private String type;
-	private String id;
-	private String name;
-	private String annotations;
-	private List<Point> coordinates =  new ArrayList<Point>();
+	
+	protected String type;
+	protected String id;
+	protected String name;
+	protected String annotations;
+	protected List<Point> coordinates =  new ArrayList<Point>();
 	
 	/**
 	 * The constructors
@@ -27,6 +30,13 @@ public class XMINode {
 		this.name = "";
 		this.annotations = "";
 	}
+
+	public XMINode(String id) {
+		this.type = "";
+		this.id = id;
+		this.name = "";
+		this.annotations = "";
+	}
 	
 	public XMINode(String type, String id, String name, String annotations, ArrayList<Point> coordinates) {
 		this.type = type;
@@ -34,6 +44,17 @@ public class XMINode {
 		this.name = name;
 		this.annotations = annotations;
 		this.coordinates = coordinates;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof XMINode) {
+			XMINode oNode = (XMINode)o;
+			if (!this.id.isEmpty() && this.id.equals(oNode.getId())) {
+				return true;
+			}
+		}
+		return super.equals(o);
 	}
 	
 	/**
@@ -96,4 +117,5 @@ public class XMINode {
 	public void setCoordinates(ArrayList<Point> coordinates) {
 		this.coordinates = coordinates;
 	}
+	
 }

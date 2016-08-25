@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import eu.scasefp7.eclipse.umlrec.Activator;
@@ -28,13 +29,14 @@ public class MyWizard extends Wizard implements IImportWizard{
 	private PageTwo pageTwo;
 	private IStructuredSelection selection;
 	private List<IProject> sCASEProjectList;
+	private IProject selectedProject;
 	
 	public static String PLUGIN_ID = Activator.PLUGIN_ID;
 	
     @Override
 	public void addPages() {
 		pageOne=new PageOne();
-		pageTwo=new PageTwo(selection, sCASEProjectList);
+		pageTwo=new PageTwo(selection, sCASEProjectList, this);
 		addPage(pageOne);	
 		addPage(pageTwo);
 	}
@@ -43,14 +45,20 @@ public class MyWizard extends Wizard implements IImportWizard{
 	public boolean performFinish() {
 		
 		System.out.println(pageTwo.getTresh());
-		
-		IProject selectedProject = (IProject)((org.eclipse.jface.viewers.TreeSelection)selection).getPaths()[0].getFirstSegment();
+
+		// If the wizard was called using a project's context menu (right-click on a project) then the selection will not be empty.
+		// The selection will be empty if the import wizard was called through the 'File' menu.
+		// In that case, the selectedProject will have been set by PageTwo.validatePage()
+		if (!selection.isEmpty()) {
+			selectedProject = (IProject)((org.eclipse.jface.viewers.TreeSelection)selection).getPaths()[0].getFirstSegment();
+		}
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		Display disp = Display.getCurrent();
 		UMLrecognizerJob job = new UMLrecognizerJob(pageOne.getFilePath(),
 		        workspace.getRoot().getLocation().toOSString() + pageTwo.getContainerFullPath().toOSString() + File.separator + getRequirementsFolderName(pageTwo.getContainerFullPath()),
 				pageTwo.getFileName(), pageOne.getIsUseCase(), 
 				pageTwo.isShowImages(), pageTwo.getTresh(), pageTwo.getSizeRate(),
-				pageTwo.getDistNeigborObjects(), pageTwo.getCoverAreaThr(), selectedProject);
+				pageTwo.getDistNeigborObjects(), pageTwo.getCoverAreaThr(), selectedProject, disp);
 		job.setRule(workspace.getRoot()); // TODO: Course locking of the workspace, use finer locking (file location?)
 		job.schedule();
 		
@@ -127,5 +135,13 @@ public class MyWizard extends Wizard implements IImportWizard{
 		}
         
         return folderName;
+	}
+
+	IProject getSelectedProject() {
+		return selectedProject;
+	}
+
+	void setSelectedProject(IProject selectedProject) {
+		this.selectedProject = selectedProject;
 	}
 }

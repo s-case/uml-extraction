@@ -100,9 +100,23 @@ public class PapyrusGenerator {
 	
 			Element root = doc.getDocumentElement();
 			Node packagedElement = root.getFirstChild().getNextSibling();
-			if (packagedElement.getNodeType() == Node.ELEMENT_NODE) {
-				Element eElement = (Element) packagedElement;
-				sourceUMLType = eElement.getAttribute("xmi:type");
+			while (packagedElement != null) {
+				if (packagedElement.getNodeType() == Node.ELEMENT_NODE) {
+					Element eElement = (Element) packagedElement;
+					String xmiType = eElement.getAttribute("xmi:type");
+					if (xmiType.equalsIgnoreCase("uml:UseCase") || xmiType.equalsIgnoreCase("uml:Actor")) {
+						sourceUMLType = "uml:UseCase";
+						break;
+					}
+					else if (xmiType.equalsIgnoreCase("uml:Activity")) {
+						sourceUMLType = "uml:Activity";
+						break;
+					}
+				}
+				packagedElement = packagedElement.getNextSibling();
+			}
+			if (packagedElement == null) {
+				sourceUMLType = "unknown";
 			}
 		} catch (ParserConfigurationException | SAXException | IOException | CoreException e) {
 			e.printStackTrace();
@@ -134,7 +148,7 @@ public class PapyrusGenerator {
 //						ArrayList<XMIEdge> edgesWithCondition = parser.getEdgesWithCondition();
 //						ArrayList<XMIEdge> edgesWithoutCondition = parser.getEdgesWithoutCondition();
 						
-						if (parser.checkParsedXmiForPapyrus()) {
+						if (parser.checkParsedXmiForPapyrus(null)) {
 							setSourceUMLActivityNodes(nodes);
 							setSourceUMLEdges(edges);
 						}
@@ -147,7 +161,7 @@ public class PapyrusGenerator {
 						ArrayList<XMIEdge> edges = parser.getEdges();
 						ArrayList<XMIUseCaseNode> nodes = parser.getNodes();
 						
-						if (parser.checkParsedXmiForPapyrus()) {
+						if (parser.checkParsedXmiForPapyrus(null)) {
 							setSourceUMLUseCaseNodes(nodes);
 							setSourceUMLEdges(edges);
 						}
@@ -273,7 +287,7 @@ public class PapyrusGenerator {
 					}
 					
 					// generalizations
-					List<String> outgoingSolidNodesIds = node.getoutgoingSolidNode();
+					List<String> outgoingSolidNodesIds = node.getOutgoingSolidNodes();
 					if(outgoingSolidNodesIds!=null && outgoingSolidNodesIds.isEmpty()==false) {
 						for (String outgoingNodeId : outgoingSolidNodesIds) {
 							if(outgoingNodeId.isEmpty()==false) {
@@ -291,7 +305,7 @@ public class PapyrusGenerator {
 					}
 					
 					// associations
-					List<String> connectedSolidNodesIds = node.getconnectedSolidNode();
+					List<String> connectedSolidNodesIds = node.getConnectedSolidNodes();
 					if(connectedSolidNodesIds!=null && connectedSolidNodesIds.isEmpty()==false) {
 						for (String connectedNodeId : connectedSolidNodesIds) {
 							if(connectedNodeId.isEmpty()==false) {
@@ -329,7 +343,7 @@ public class PapyrusGenerator {
 					}
 					
 					// include - extend
-					List<String> outgoingDashedNodesIds = node.getoutgoingDashedNode();
+					List<String> outgoingDashedNodesIds = node.getOutgoingDashedNodes();
 					if(outgoingDashedNodesIds!=null && outgoingDashedNodesIds.isEmpty()==false) {
 						for (String outgoingNodeId : outgoingDashedNodesIds) {
 							if(outgoingNodeId.isEmpty()==false) {
@@ -623,7 +637,7 @@ public class PapyrusGenerator {
 			PreferencesManager.setValue(PreferencesManager.ACTIVITY_DIAGRAM_PREF, true);
 			PreferencesManager.setValue(PreferencesManager.USE_CASE_DIAGRAM_PREF, false);
 		}
-		else if (sourceUMLType.equalsIgnoreCase("uml:Use Case")) { 
+		else if (sourceUMLType.equalsIgnoreCase("uml:UseCase") || sourceUMLType.equalsIgnoreCase("uml:Actor")) { 
 			PreferencesManager.setValue(PreferencesManager.ACTIVITY_DIAGRAM_PREF, false);
 			PreferencesManager.setValue(PreferencesManager.USE_CASE_DIAGRAM_PREF, true);
 		}

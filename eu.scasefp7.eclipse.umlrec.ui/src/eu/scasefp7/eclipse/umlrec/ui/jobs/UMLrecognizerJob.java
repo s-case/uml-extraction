@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.widgets.Display;
 
 import eu.scasefp7.eclipse.umlrec.MissingRecognizerDataException;
 import eu.scasefp7.eclipse.umlrec.RecognitionException;
@@ -38,8 +39,9 @@ public class UMLrecognizerJob extends WorkspaceJob {
 	private double distNeighborObjects;
 	private double coverAreaThreshold;
 	private IProject project;
+	private Display disp;
 
-	public UMLrecognizerJob(String srcFilePath, String saveDestPath, String destFileName, boolean isUseCase, boolean showImages, int threshold, double sizeRate, double distNeighborObjects, double coverAreaThreshold, IProject project) {
+	public UMLrecognizerJob(String srcFilePath, String saveDestPath, String destFileName, boolean isUseCase, boolean showImages, int threshold, double sizeRate, double distNeighborObjects, double coverAreaThreshold, IProject project, Display disp) {
 		super(Messages.UMLrecognizerJob_UMLrecognizerJobName); 
 		this.srcFilePath=srcFilePath;
 		this.saveDestPath=saveDestPath;
@@ -51,6 +53,7 @@ public class UMLrecognizerJob extends WorkspaceJob {
 		this.distNeighborObjects = distNeighborObjects;
 		this.coverAreaThreshold = coverAreaThreshold;
 		this.project = project;
+		this.disp = disp;
 	}
 
 	@Override
@@ -61,7 +64,7 @@ public class UMLrecognizerJob extends WorkspaceJob {
 		
 		UMLRecognizer uml;
 		try {
-			uml = new UMLRecognizer();
+			uml = new UMLRecognizer(disp);
 		} catch (Exception mrne) {
 			mrne.printStackTrace();
 			log.log(new Status(IStatus.ERROR, MyWizard.PLUGIN_ID, Messages.UMLrecognizerJob_JNIFail));

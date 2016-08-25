@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -58,6 +59,7 @@ public class UMLRecognizer {
 	private String xmi;
 	private boolean isUseCase;
 	private String sourceUMLType;
+	private Display disp;
 	private List<XMIActivityNode> sourceUMLActivityNodes = new ArrayList<XMIActivityNode>();
 	private List<XMIUseCaseNode> sourceUMLUseCaseNodes = new ArrayList<XMIUseCaseNode>();
 	private List<XMIEdge> sourceUMLEdges = new ArrayList<XMIEdge>();
@@ -72,8 +74,8 @@ public class UMLRecognizer {
 	/**
 	 * 
 	 */
-	public UMLRecognizer() {
-
+	public UMLRecognizer(Display disp) {
+		this.disp = disp;
 	}
 
 	public void setIsUseCase(boolean isUseCase) {
@@ -125,7 +127,7 @@ public class UMLRecognizer {
 				ArrayList<XMIUseCaseNode> nodes = uCaseParser.getNodes();
 				ArrayList<XMIEdge> edges = uCaseParser.getEdges();
 				
-				if (uCaseParser.checkParsedXmiForPapyrus()) {
+				if (uCaseParser.checkParsedXmiForPapyrus(disp)) {
 					sourceUMLUseCaseNodes = nodes;
 					sourceUMLEdges = edges;
 				}
@@ -142,7 +144,7 @@ public class UMLRecognizer {
 				ArrayList<XMIActivityNode> nodes = activityParser.getNodes();
 				ArrayList<XMIEdge> edges = activityParser.getEdges();
 				
-				if (activityParser.checkParsedXmiForPapyrus()) {
+				if (activityParser.checkParsedXmiForPapyrus(disp)) {
 					sourceUMLActivityNodes = nodes;
 					sourceUMLEdges = edges;
 				}
@@ -291,7 +293,7 @@ public class UMLRecognizer {
 					}
 					
 					// generalizations
-					List<String> outgoingSolidNodesIds = node.getoutgoingSolidNode();
+					List<String> outgoingSolidNodesIds = node.getOutgoingSolidNodes();
 					if(outgoingSolidNodesIds!=null && outgoingSolidNodesIds.isEmpty()==false) {
 						for (String outgoingNodeId : outgoingSolidNodesIds) {
 							if(outgoingNodeId.isEmpty()==false) {
@@ -309,7 +311,7 @@ public class UMLRecognizer {
 					}
 					
 					// associations
-					List<String> connectedSolidNodesIds = node.getconnectedSolidNode();
+					List<String> connectedSolidNodesIds = node.getConnectedSolidNodes();
 					if(connectedSolidNodesIds!=null && connectedSolidNodesIds.isEmpty()==false) {
 						for (String connectedNodeId : connectedSolidNodesIds) {
 							if(connectedNodeId.isEmpty()==false) {
@@ -347,7 +349,7 @@ public class UMLRecognizer {
 					}
 					
 					// include - extend
-					List<String> outgoingDashedNodesIds = node.getoutgoingDashedNode();
+					List<String> outgoingDashedNodesIds = node.getOutgoingDashedNodes();
 					if(outgoingDashedNodesIds!=null && outgoingDashedNodesIds.isEmpty()==false) {
 						for (String outgoingNodeId : outgoingDashedNodesIds) {
 							if(outgoingNodeId.isEmpty()==false) {

@@ -16,11 +16,11 @@ public class WriteStaticOntology {
 			StaticOntologyAPI ontology, String diagramName) {
 
 		for (XMIUseCaseNode node : nodes) {
-			if (node.getType().equals("uml:UserNode")) {
+			if (node.getType().equals(XMIUseCaseNode.ACTOR_TYPE)) {
 				ontology.addActor(node.getName());
 				ontology.connectRequirementToConcept(diagramName, node.getName());
 
-			} else if (node.getType().equals("uml:UseCaseNode")) {
+			} else if (node.getType().equals(XMIUseCaseNode.USE_CASE_TYPE)) {
 				if (!node.getAnnotations().equals("")) {
 					String[] actionAndObject = WriteDynamicOntology.getActionAndObject(node.getName(),
 							node.getAnnotations());
@@ -37,7 +37,7 @@ public class WriteStaticOntology {
 		}
 
 		for (XMIUseCaseNode node : nodes) {
-			if (node.getType().equals("uml:UseCaseNode")) {
+			if (node.getType().equals(XMIUseCaseNode.USE_CASE_TYPE)) {
 				if (!node.getAnnotations().equals("")) {
 
 					String[] actionAndObject = WriteDynamicOntology.getActionAndObject(node.getName(),
@@ -48,13 +48,13 @@ public class WriteStaticOntology {
 					// has actor or connected use case
 					boolean nodeIsConnectedToActor = false;
 
-					for (String id : node.getincomingSolidNode()) {
+					for (String id : node.getIncomingSolidNodes()) {
 						for (XMIUseCaseNode connectedNode : nodes) {
-							if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UserNode")) {
+							if (connectedNode.getId().equals(id) && connectedNode.getType().equals(XMIUseCaseNode.ACTOR_TYPE)) {
 								ontology.connectActorToAction(connectedNode.getName(), action);
 								nodeIsConnectedToActor = true;
 							} else if (connectedNode.getId().equals(id)
-									&& connectedNode.getType().equals("uml:UseCaseNode")) {
+									&& connectedNode.getType().equals(XMIUseCaseNode.USE_CASE_TYPE)) {
 								if (!connectedNode.getAnnotations().equals("")) {
 									String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(
 											connectedNode.getName(), connectedNode.getAnnotations());
@@ -65,17 +65,17 @@ public class WriteStaticOntology {
 						}
 					}
 
-					for (String id : node.getconnectedSolidNode()) {
+					for (String id : node.getConnectedSolidNodes()) {
 						for (XMIUseCaseNode connectedNode : nodes) {
-							if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UserNode")) {
+							if (connectedNode.getId().equals(id) && connectedNode.getType().equals(XMIUseCaseNode.ACTOR_TYPE)) {
 								ontology.connectActorToAction(connectedNode.getName(), action);
 								nodeIsConnectedToActor = true;
 							}
 						}
 					}
-					for (String id : node.getconnectedSolidNode()) {
+					for (String id : node.getConnectedSolidNodes()) {
 						for (XMIUseCaseNode connectedNode : nodes) {
-							if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UseCaseNode")) {
+							if (connectedNode.getId().equals(id) && connectedNode.getType().equals(XMIUseCaseNode.USE_CASE_TYPE)) {
 								if (nodeIsConnectedToActor) {
 									if (!connectedNode.getAnnotations().equals("")) {
 										String[] actionAndObject2 = WriteDynamicOntology.getActionAndObject(
@@ -89,9 +89,9 @@ public class WriteStaticOntology {
 					}
 
 					// extends or includes
-					for (String id : node.getincomingDashedNode()) {
+					for (String id : node.getIncomingDashedNodes()) {
 						for (XMIUseCaseNode connectedNode : nodes) {
-							if (connectedNode.getId().equals(id) && connectedNode.getType().equals("uml:UseCaseNode")) {
+							if (connectedNode.getId().equals(id) && connectedNode.getType().equals(XMIUseCaseNode.USE_CASE_TYPE)) {
 								for (XMIEdge edge : edges) {
 									if (((XMIUseCaseNode) edge.getSourceNode()).getId().equals(id)
 											&& ((XMIUseCaseNode) edge.getTargetNode()).getId().equals(node.getId())) {

@@ -13,9 +13,12 @@ import java.util.ArrayList;
 public class XMIActivityNode extends XMINode {
 	private ArrayList<String> incoming = new ArrayList<String>();
 	private ArrayList<String> outgoing = new ArrayList<String>();
-	private ArrayList<XMIActivityNode> sourceNodes= new ArrayList<XMIActivityNode>();
-	private ArrayList<XMIActivityNode> destinationNodes= new ArrayList<XMIActivityNode>();
 
+	private ArrayList<XMIActivityNode> sourceNodes = new ArrayList<XMIActivityNode>();
+	private ArrayList<XMIActivityNode> destinationNodes = new ArrayList<XMIActivityNode>();
+	private ArrayList<XMIEdge> incomingEdges = new ArrayList<XMIEdge>();
+	private ArrayList<XMIEdge> outgoingEdges = new ArrayList<XMIEdge>();
+	
 	public XMIActivityNode() {
 		super();
 	}
@@ -61,5 +64,16 @@ public class XMIActivityNode extends XMINode {
 	public void setDestinationNodes(XMIActivityNode node) {
 		this.destinationNodes.add(node);
 	}
+	
+
+	public ArrayList<XMIEdge> getIncomingEdges() {
+		return incomingEdges;
+	}
+	
+
+	public ArrayList<XMIEdge> getOutgoingEdges() {
+		return outgoingEdges;
+	}
+
 }
 

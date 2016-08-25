@@ -10,6 +10,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.w3c.dom.Document;
 
 import eu.scasefp7.eclipse.core.ontology.StaticOntologyAPI;
 
@@ -40,9 +41,10 @@ public class ExportAllUseCaseDiagramsToOntologyHandler extends ExportToOntologyH
 			// Iterate over the selected files
 			for (IFile file : files) {
 				if (file != null) {
-					String diagramType = getDiagramType(file);
+					Document doc = getXMIDocOfFile(file);
+					String diagramType = getDiagramType(doc);
 					if (diagramType.equals("UseCaseDiagram"))
-						instantiateStaticOntology(file, ontology);
+						instantiateStaticOntology(doc, file, ontology);
 				}
 			}
 			ontology.close();
