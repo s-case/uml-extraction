@@ -37,7 +37,7 @@ public class DefaultPapyrusModelManager extends AbstractPapyrusModelManager {
 	 * @param editor - The editor
 	 */
 	public DefaultPapyrusModelManager(IMultiDiagramEditor editor) {
-		super(editor);
+		super(editor); 
 	}
 	
 
