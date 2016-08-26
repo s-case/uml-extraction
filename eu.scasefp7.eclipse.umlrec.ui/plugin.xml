@@ -95,7 +95,7 @@
 			appearsBefore="eu.scasefp7.eclipse.core.ui.dashboard.groups.mashup"
 			name="Design" />
         <command
-        	  buttonId="eu.scasefp7.eclipse.core.ui.dashboard.buttons.importUML"
+        	  buttonId="eu.scasefp7.eclipse.core.ui.dashboard.buttons.design.importUML"
               commandId="org.eclipse.ui.file.import"
               groupId="eu.scasefp7.eclipse.core.ui.dashboard.groups.design"
               label="Import UML diagram"
