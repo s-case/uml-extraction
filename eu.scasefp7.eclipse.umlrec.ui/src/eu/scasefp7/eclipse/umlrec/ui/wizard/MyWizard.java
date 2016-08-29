@@ -48,14 +48,9 @@ public class MyWizard extends Wizard implements IImportWizard{
 		
 		System.out.println(pageTwo.getTresh());
 
-		// If the wizard was called using a project's context menu (right-click on a project) then the selection will not be empty.
-		// The selection will be empty if the import wizard was called through the 'File' menu.
-		// In that case, the selectedProject will have been set by PageTwo.validatePage()
-		if (!selection.isEmpty()) {
-			selectedProject = (IProject)((org.eclipse.jface.viewers.TreeSelection)selection).getPaths()[0].getFirstSegment();
-		}
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		Display disp = Display.getCurrent();
+		// The selectedProject variable will have been set by PageTwo.validatePage()
 		UMLrecognizerJob job = new UMLrecognizerJob(pageOne.getFilePath(),
 		        workspace.getRoot().getLocation().toOSString() + pageTwo.getContainerFullPath().toOSString() + File.separator + getRequirementsFolderName(pageTwo.getContainerFullPath()),
 				pageTwo.getFileName(), pageOne.getIsUseCase(), 
