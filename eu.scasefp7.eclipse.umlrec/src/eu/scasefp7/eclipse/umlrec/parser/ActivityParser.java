@@ -28,21 +28,25 @@ public class ActivityParser {
 	private boolean correctXMI;
 
 	/**
-	 * Parses the given xmi document to fill the edges and nodes lists of this ActivityParser object.
-	 * You need to use this method together with UMLRecognizer.makePapyrusCompliantUML
-	 * or PapyrusGenerator.makeSourceUMLPapyrusCompliant() to produce correct xmi format.
+	 * Parses the given xmi document to fill the edges and nodes lists of this
+	 * ActivityParser object. You need to use this method together with
+	 * UMLRecognizer.makePapyrusCompliantUML or
+	 * PapyrusGenerator.makeSourceUMLPapyrusCompliant() to produce correct xmi
+	 * format.
+	 * 
 	 * @param doc
-	 * The xmi document to be parsed.
+	 *            The xmi document to be parsed.
 	 */
 	public void Parsexmi(Document doc) {
 		NodeList edgeList = doc.getElementsByTagName("edge");
 		NodeList nodeList = doc.getElementsByTagName("node");
 		// We set the correctXMI flag to false,
-		// to indicate that we are setting up this ActivityParser using incorrect XMI as input, i.e. as passed from UMLrecognizer
+		// to indicate that we are setting up this ActivityParser using
+		// incorrect XMI as input, i.e. as passed from UMLrecognizer
 		correctXMI = false;
-		
+
 		buildNodesAndEdges(nodeList, edgeList);
-		
+
 		// for each node, we set the incoming and outgoing "edges"
 		for (XMIActivityNode n : nodes) {
 			ArrayList<String> incomingEdgesIds = n.getIncoming();
@@ -67,7 +71,7 @@ public class ActivityParser {
 		}
 
 		findEdgesWithoutCondition();
-		
+
 		// we check all nodes to find those that are condition nodes
 		for (XMIActivityNode n : nodes) {
 			// if the node is a condition node
@@ -80,26 +84,36 @@ public class ActivityParser {
 				for (XMIActivityNode source : sourcesOfConditionNode) {
 					// and all its destination nodes
 					for (XMIActivityNode destination : destinationsOfConditionNode) {
-						// and we construct a new edge for each pair of source and destination nodes
+						// and we construct a new edge for each pair of source
+						// and destination nodes
 						XMIEdge e = new XMIEdge("", destination.getId(), source.getId(), "", "uml:ControlFlow", null);
 						e.setSourceNode(source);
 						e.setTargetNode(destination);
-						// Then, if the initial condition node is a decision node
+						// Then, if the initial condition node is a decision
+						// node
 						if (n.getType().equals("uml:DecisionNode")) {
 							// we check all edges
 							for (XMIEdge edge : edges) {
-								// to find the one that starts from the initial condition node
-								// and goes to the current destination node 
+								// to find the one that starts from the initial
+								// condition node
+								// and goes to the current destination node
 								if (destination.getId().equals(edge.getTarget())
 										&& n.getId().equals(edge.getSource())) {
-									// If this edge's name is empty, we set its condition to the name of the initial node plus an index
-									// and also set the same condition to the newly constructed edge
+									// If this edge's name is empty, we set its
+									// condition to the name of the initial node
+									// plus an index
+									// and also set the same condition to the
+									// newly constructed edge
 									if (edge.getName().isEmpty()) {
 										edge.setCondition(n.getName() + "__" + i);
 										e.setCondition(n.getName() + "__" + i);
 										i++;
-									// otherwise, if the edge's name is not empty, we set its condition to the name of the initial node plus the edge's own name
-									// and also set the same condition to the newly constructed edge
+										// otherwise, if the edge's name is not
+										// empty, we set its condition to the
+										// name of the initial node plus the
+										// edge's own name
+										// and also set the same condition to
+										// the newly constructed edge
 									} else {
 										edge.setCondition(n.getName() + "__" + edge.getName());
 										e.setCondition(n.getName() + "__" + edge.getName());
@@ -107,7 +121,8 @@ public class ActivityParser {
 								}
 							}
 						}
-						// Finally, we add the newly created edge to the set of edges with condition
+						// Finally, we add the newly created edge to the set of
+						// edges with condition
 						edgesWithCondition.add(e);
 					}
 				}
@@ -116,18 +131,22 @@ public class ActivityParser {
 	}
 
 	/**
-	 * Parses the given xmi document to fill the edges and nodes lists of this ActivityParser object.
+	 * Parses the given xmi document to fill the edges and nodes lists of this
+	 * ActivityParser object.
+	 * 
 	 * @param doc
-	 * The xmi document to be parsed.
+	 *            The xmi document to be parsed.
 	 */
 	public void parsePapyrusXMI(Document doc) {
 		NodeList edgeList = doc.getElementsByTagName("edge");
 		NodeList nodeList = doc.getElementsByTagName("node");
 		// We set the correctXMI flag to true,
-		// to indicate that we are setting up this ActivityParser using correct XMI as input e.g. XMI from a papyrus model
-		// If this is not the case, method findEdge() will change the value to false.
+		// to indicate that we are setting up this ActivityParser using correct
+		// XMI as input e.g. XMI from a papyrus model
+		// If this is not the case, method findEdge() will change the value to
+		// false.
 		correctXMI = true;
-		
+
 		buildNodesAndEdges(nodeList, edgeList);
 
 		// for each node, we set the incoming and outgoing edges
@@ -149,7 +168,7 @@ public class ActivityParser {
 		}
 
 		findEdgesWithoutCondition();
-		
+
 		// we check all nodes to find those that are condition nodes
 		for (XMIActivityNode n : nodes) {
 			// if the node is a condition node
@@ -163,32 +182,41 @@ public class ActivityParser {
 					// and all its outgoing edges
 					for (XMIEdge outEdge : outEdges) {
 						// and we construct a new edge
-						XMIEdge e = new XMIEdge("", outEdge.getTarget(), inEdge.getSource(), "", "uml:ControlFlow", null);
+						XMIEdge e = new XMIEdge("", outEdge.getTarget(), inEdge.getSource(), "", "uml:ControlFlow",
+								null);
 						e.setSourceNode(inEdge.getSourceNode());
 						e.setTargetNode(outEdge.getTargetNode());
-						// Then, if the initial condition node is a decision node
+						// Then, if the initial condition node is a decision
+						// node
 						if (n.getType().equals("uml:DecisionNode")) {
-							// If the name of the outgoing edge is empty, we set its condition to the name of the initial node plus an index
-							// and also set the same condition to the newly constructed edge
+							// If the name of the outgoing edge is empty, we set
+							// its condition to the name of the initial node
+							// plus an index
+							// and also set the same condition to the newly
+							// constructed edge
 							if (outEdge.getName().isEmpty()) {
 								outEdge.setCondition(n.getName() + "__" + i);
 								e.setCondition(n.getName() + "__" + i);
 								i++;
-							// otherwise, if the outgoing edge's name is not empty, we set its condition to the name of the initial node plus the edge's own name
-							// and also set the same condition to the newly constructed edge
+								// otherwise, if the outgoing edge's name is not
+								// empty, we set its condition to the name of
+								// the initial node plus the edge's own name
+								// and also set the same condition to the newly
+								// constructed edge
 							} else {
 								outEdge.setCondition(n.getName() + "__" + outEdge.getName());
 								e.setCondition(n.getName() + "__" + outEdge.getName());
 							}
 						}
-						// At the end, we add the newly created edge to the set of edges with condition
+						// At the end, we add the newly created edge to the set
+						// of edges with condition
 						edgesWithCondition.add(e);
 					}
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @return the nodes of the diagram.
@@ -232,7 +260,7 @@ public class ActivityParser {
 	public boolean isCorrectXMI() {
 		return correctXMI;
 	}
-	
+
 	/**
 	 * Separates a string into different strings every time "_" character occurs
 	 * and puts the strings in a list.
@@ -254,15 +282,17 @@ public class ActivityParser {
 				} else {
 					break;
 				}
-				startOfSubstring = i+1;
+				startOfSubstring = i + 1;
 			}
 		}
 		list.add(trimmedS.substring(startOfSubstring, trimmedS.length()));
 
 		return list;
 	}
+
 	/**
 	 * Split a string into coordinates.
+	 * 
 	 * @param s
 	 * @param list
 	 * @return
@@ -270,19 +300,19 @@ public class ActivityParser {
 	protected static ArrayList<Point> substringCoordinates(String s, ArrayList<Point> list) {
 		Pattern p = Pattern.compile("\\(([^)]+)\\)");
 		Matcher m = p.matcher(s);
-		String x="";
-		String y="";
-		while(m.find()) {
+		String x = "";
+		String y = "";
+		while (m.find()) {
 			String c = m.group(1);
-			//System.out.println(m.group(1));   
+			// System.out.println(m.group(1));
 			for (int i = 0; i < c.length(); i++) {
 				if (c.charAt(i) == ',') {
-					x= c.substring(0, i);
-					y = c.substring(i+1);
+					x = c.substring(0, i);
+					y = c.substring(i + 1);
 				}
 			}
 			Point coor = new Point(Integer.valueOf(x), Integer.valueOf(y));
-		    list.add(coor);
+			list.add(coor);
 		}
 
 		return list;
@@ -299,25 +329,25 @@ public class ActivityParser {
 		boolean forkNodesOk = true;
 		boolean edgesOk = true;
 		String nodeOrEdgeString = correctXMI ? "edge" : "node";
-		
+
 		// if this ActivityParser does not have correct XMI content
 		if (!correctXMI) {
 			// checking for edge validity
-			for (XMIEdge edge:edges){
-				if (edge.getSource().isEmpty() || edge.getTarget().isEmpty()){
-					edgesOk=false;
+			for (XMIEdge edge : edges) {
+				if (edge.getSource().isEmpty() || edge.getTarget().isEmpty()) {
+					edgesOk = false;
 					disp.syncExec(new Runnable() {
 						@Override
 						public void run() {
 							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Edge with id "+ edge.getId() +" should have both source and target nodes!");
+									"Edge with id " + edge.getId() + " should have both source and target nodes!");
 						}
 					});
 					return false;
 				}
 			}
 		}
-		
+
 		// checking for node validity
 		for (XMIActivityNode n : nodes) {
 			// checks for decision nodes
@@ -326,12 +356,13 @@ public class ActivityParser {
 					// check if an incoming ID is empty
 					if (n.getIncoming().get(i).isEmpty()) {
 						decisionNodesOk = false;
-						
+
 						disp.syncExec(new Runnable() {
 							@Override
 							public void run() {
 								MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-										"Decision node with id "+ n.getId() +" should have incoming "+nodeOrEdgeString+"!");
+										"Decision node with id " + n.getId() + " should have incoming "
+												+ nodeOrEdgeString + "!");
 							}
 						});
 						return false;
@@ -341,12 +372,13 @@ public class ActivityParser {
 				for (int i = 0; i < n.getOutgoing().size(); i++) {
 					if (n.getOutgoing().get(i).isEmpty()) {
 						decisionNodesOk = false;
-						
+
 						disp.syncExec(new Runnable() {
 							@Override
 							public void run() {
 								MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-										"Decision node with id "+ n.getId() +" should have outgoing "+nodeOrEdgeString+"!");
+										"Decision node with id " + n.getId() + " should have outgoing "
+												+ nodeOrEdgeString + "!");
 							}
 						});
 						return false;
@@ -356,74 +388,77 @@ public class ActivityParser {
 				// check if there are too few outgoing IDs
 				if (n.getOutgoing().size() < 2) {
 					decisionNodesOk = false;
-					
+
 					disp.syncExec(new Runnable() {
 						@Override
 						public void run() {
 							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Decision node with id "+ n.getId() +" should have at least two outgoing "+nodeOrEdgeString+"s!");
+									"Decision node with id " + n.getId() + " should have at least two outgoing "
+											+ nodeOrEdgeString + "s!");
 						}
 					});
 					return false;
 				}
-			// checks for initial node
+				// checks for initial node
 			} else if (n.getType().equals("uml:InitialNode")) {
-				//check whether there are no outgoing IDs
+				// check whether there are no outgoing IDs
 				if (n.getOutgoing().size() == 0 || n.getOutgoing().get(0).isEmpty()) {
 					initialNodeOk = false;
-					
+
 					disp.syncExec(new Runnable() {
 						@Override
 						public void run() {
 							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Initial node with id "+ n.getId() +" should have outgoing "+nodeOrEdgeString+"!");
+									"Initial node with id " + n.getId() + " should have outgoing " + nodeOrEdgeString
+											+ "!");
 						}
 					});
 					return false;
 				}
-			// checks for activity final node
+				// checks for activity final node
 			} else if (n.getType().equals("uml:ActivityFinalNode")) {
-				//check whether there are no incoming IDs
+				// check whether there are no incoming IDs
 				if (n.getIncoming().size() == 0 || n.getIncoming().get(0).isEmpty()) {
 					finalNodeOk = false;
-					
+
 					disp.syncExec(new Runnable() {
 						@Override
 						public void run() {
-							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Final node with id "+ n.getId() +" should have incoming "+nodeOrEdgeString+"!");
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured", "Final node with id "
+									+ n.getId() + " should have incoming " + nodeOrEdgeString + "!");
 						}
 					});
 					return false;
 				}
-			// checks for opaque action
+				// checks for opaque action
 			} else if (n.getType().equals("uml:OpaqueAction")) {
 				// check if there are both incoming and outgoing IDs present
-				if (n.getIncoming().size() == 0 || n.getIncoming().get(0).isEmpty() ||
-					n.getOutgoing().size() == 0 || n.getOutgoing().get(0).isEmpty()) {
+				if (n.getIncoming().size() == 0 || n.getIncoming().get(0).isEmpty() || n.getOutgoing().size() == 0
+						|| n.getOutgoing().get(0).isEmpty()) {
 					actionNodesOk = false;
-					
+
 					disp.syncExec(new Runnable() {
 						@Override
 						public void run() {
 							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Opaque Action node with id "+ n.getId() +" should have both incoming and outgoing "+nodeOrEdgeString+"s!");
+									"Opaque Action node with id " + n.getId()
+											+ " should have both incoming and outgoing " + nodeOrEdgeString + "s!");
 						}
 					});
 					return false;
 				}
-			// checks for join node
+				// checks for join node
 			} else if (n.getType().equals("uml:JoinNode")) {
 				// check if there are both incoming and outgoing IDs present
-				if (n.getIncoming().size() == 0 || n.getIncoming().get(0).isEmpty() ||
-					n.getOutgoing().size() == 0 || n.getOutgoing().get(0).isEmpty()) {
+				if (n.getIncoming().size() == 0 || n.getIncoming().get(0).isEmpty() || n.getOutgoing().size() == 0
+						|| n.getOutgoing().get(0).isEmpty()) {
 					joinNodesOk = false;
-					
+
 					disp.syncExec(new Runnable() {
 						@Override
 						public void run() {
-							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Join node with id "+ n.getId() +" should have both incoming and outgoing "+nodeOrEdgeString+"s!");
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured", "Join node with id "
+									+ n.getId() + " should have both incoming and outgoing " + nodeOrEdgeString + "s!");
 						}
 					});
 					return false;
@@ -431,28 +466,28 @@ public class ActivityParser {
 				// check if there are too few outgoing IDs
 				if (n.getIncoming().size() < 2) {
 					joinNodesOk = false;
-					
+
 					disp.syncExec(new Runnable() {
 						@Override
 						public void run() {
-							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Join node with id "+ n.getId() +" should have at least two incoming "+nodeOrEdgeString+"s!");
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured", "Join node with id "
+									+ n.getId() + " should have at least two incoming " + nodeOrEdgeString + "s!");
 						}
 					});
 					return false;
 				}
-			// checks for fork node
+				// checks for fork node
 			} else if (n.getType().equals("uml:ForkNode")) {
 				// check if there are both incoming and outgoing IDs present
-				if (n.getIncoming().size() == 0 || n.getIncoming().get(0).isEmpty() ||
-					n.getOutgoing().size() == 0 || n.getOutgoing().get(0).isEmpty()) {
+				if (n.getIncoming().size() == 0 || n.getIncoming().get(0).isEmpty() || n.getOutgoing().size() == 0
+						|| n.getOutgoing().get(0).isEmpty()) {
 					forkNodesOk = false;
-					
+
 					disp.syncExec(new Runnable() {
 						@Override
 						public void run() {
-							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Fork node with id "+ n.getId() +" should have both incoming and outgoing "+nodeOrEdgeString+"s!");
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured", "Fork node with id "
+									+ n.getId() + " should have both incoming and outgoing " + nodeOrEdgeString + "s!");
 						}
 					});
 					return false;
@@ -460,12 +495,12 @@ public class ActivityParser {
 				// check if there are too few outgoing IDs
 				if (n.getOutgoing().size() < 2) {
 					forkNodesOk = false;
-					
+
 					disp.syncExec(new Runnable() {
 						@Override
 						public void run() {
-							MessageDialog.openInformation(disp.getActiveShell(), "Error occured",
-									"Fork node with id "+ n.getId() +" should have at least two outgoing "+nodeOrEdgeString+"s!");
+							MessageDialog.openInformation(disp.getActiveShell(), "Error occured", "Fork node with id "
+									+ n.getId() + " should have at least two outgoing " + nodeOrEdgeString + "s!");
 						}
 					});
 					return false;
@@ -473,7 +508,8 @@ public class ActivityParser {
 			}
 
 		}
-		xmiIsOk = actionNodesOk && finalNodeOk && initialNodeOk && decisionNodesOk && joinNodesOk && forkNodesOk && edgesOk;
+		xmiIsOk = actionNodesOk && finalNodeOk && initialNodeOk && decisionNodesOk && joinNodesOk && forkNodesOk
+				&& edgesOk;
 		return xmiIsOk;
 	}
 
@@ -481,17 +517,28 @@ public class ActivityParser {
 		final Display disp;
 		if (display != null) {
 			disp = display;
-		} else  {
+		} else {
 			disp = Display.getCurrent();
 		}
 		ArrayList<String> edgeIDsToDelete = new ArrayList<String>();
 		boolean edgesOk = true;
-		
-		for (int i=edges.size()-1; i >= 0; i--) {
+
+		for (int i = edges.size() - 1; i >= 0; i--) {
 			if (edges.get(i).getSource().isEmpty() || edges.get(i).getTarget().isEmpty()) {
 				edgeIDsToDelete.add(edges.get(i).getId());
 				edges.remove(edges.get(i));
-			}			
+			}
+		}
+		for (int i = edges.size() - 1; i >= 0; i--) {
+			boolean sourceIsConditionNode = false;
+
+			if (((XMIActivityNode) edges.get(i).getSourceNode()).getType().equals("uml:DecisionNode")) {
+				sourceIsConditionNode = true;
+			}
+
+			if (!edges.get(i).getName().isEmpty() && !sourceIsConditionNode) {
+				edges.get(i).setName("");
+			}
 		}
 		if (!edgeIDsToDelete.isEmpty()) {
 			disp.syncExec(new Runnable() {
@@ -507,7 +554,8 @@ public class ActivityParser {
 						deletedIDs += id;
 					}
 					MessageDialog.openInformation(disp.getActiveShell(), "Problematic edges found and removed",
-							"The edges with the following IDs were removed, as they were missing a source node, target node or both:\n" + deletedIDs);
+							"The edges with the following IDs were removed, as they were missing a source node, target node or both:\n"
+									+ deletedIDs);
 				}
 			});
 		}
@@ -519,13 +567,12 @@ public class ActivityParser {
 		int index = edges.indexOf(new XMIEdge(edgeID));
 		if (index >= 0) {
 			correspondingEdge = edges.get(index);
-		}
-		else {
+		} else {
 			correctXMI = false;
 		}
 		return correspondingEdge;
 	}
-	
+
 	private void buildNodesAndEdges(NodeList nodeList, NodeList edgeList) {
 		// we build the edges of the graph
 		for (int i = 0; i < edgeList.getLength(); i++) {
@@ -535,11 +582,11 @@ public class ActivityParser {
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
 				Element eElement = (Element) nNode;
-				
+
 				String coordinates = eElement.getAttribute("coordinates");
 				ArrayList<Point> coordinatesList = new ArrayList<Point>();
 				coordinatesList = substringCoordinates(coordinates, coordinatesList);
-				
+
 				XMIEdge edge = new XMIEdge(eElement.getAttribute("name"), eElement.getAttribute("target"),
 						eElement.getAttribute("source"), eElement.getAttribute("xmi:id"),
 						eElement.getAttribute("xmi:type"), coordinatesList);
@@ -565,20 +612,22 @@ public class ActivityParser {
 				// depending on whether we are parsing correct XMI or not
 				incoming = substring(incomingString, incoming);
 				outgoing = substring(outgoingString, outgoing);
-				
+
 				String coordinates = eElement.getAttribute("coordinates");
 				ArrayList<Point> coordinatesList = new ArrayList<Point>();
 				coordinatesList = substringCoordinates(coordinates, coordinatesList);
 
 				XMIActivityNode node = new XMIActivityNode(eElement.getAttribute("xmi:type"),
-						eElement.getAttribute("xmi:id"), eElement.getAttribute("name"), eElement.getAttribute("annotations"), coordinatesList, incoming, outgoing);
-				
+						eElement.getAttribute("xmi:id"), eElement.getAttribute("name"),
+						eElement.getAttribute("annotations"), coordinatesList, incoming, outgoing);
+
 				System.out.println("\nCurrent Element :" + node.getName() + ", type: " + node.getType());
 				nodes.add(node);
 			}
 		}
 
-		// for each edge, we set the source and target nodes according to their IDs
+		// for each edge, we set the source and target nodes according to their
+		// IDs
 		for (XMIEdge e : edges) {
 			for (XMIActivityNode n : nodes) {
 				if (e.getSource().equals(n.getId())) {
@@ -590,13 +639,14 @@ public class ActivityParser {
 			}
 		}
 	}
-	
+
 	private void findEdgesWithoutCondition() {
 		// we check all edges to find those without condition
 		boolean sourceOK = false;
 		boolean targetOK = false;
 		for (XMIEdge e : edges) {
-			// we check whether its source node is NOT a decision, fork or join node
+			// we check whether its source node is NOT a decision, fork or join
+			// node
 			if (((XMIActivityNode) e.getSourceNode()) != null) {
 				if (!(((XMIActivityNode) e.getSourceNode()).getType().equals("uml:DecisionNode")
 						|| ((XMIActivityNode) e.getSourceNode()).getType().equals("uml:ForkNode")
@@ -608,7 +658,8 @@ public class ActivityParser {
 					sourceOK = false;
 				}
 			}
-			// similarly, we check whether its target node is NOT a decision, fork or join node
+			// similarly, we check whether its target node is NOT a decision,
+			// fork or join node
 			if (((XMIActivityNode) e.getTargetNode()) != null) {
 				if (!(((XMIActivityNode) e.getTargetNode()).getType().equals("uml:DecisionNode")
 						|| ((XMIActivityNode) e.getTargetNode()).getType().equals("uml:ForkNode")
@@ -620,7 +671,8 @@ public class ActivityParser {
 				}
 			}
 
-			// if both source and target nodes are NOT of decision, fork or join type, we add the edge to
+			// if both source and target nodes are NOT of decision, fork or join
+			// type, we add the edge to
 			// the list of edges without condition
 			if (sourceOK && targetOK) {
 				if (!edgesWithoutCondition.contains(e)) {
