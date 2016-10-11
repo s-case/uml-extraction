@@ -36,6 +36,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -153,6 +154,13 @@ public class UMLRecognizer {
 			makePapyrusCompliantUML();
 
 		} catch (ParserConfigurationException | SAXException | IOException e) {
+			disp.syncExec(new Runnable() {
+				@Override
+				public void run() {
+					MessageDialog.openInformation(disp.getActiveShell(), "Error has occured",
+							"An error in the produced xmi file was detected. The file generation has stopped.");
+				}
+			});
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
@@ -398,6 +406,13 @@ public class UMLRecognizer {
 			xmi = sw.toString();
 
 		} catch (ParserConfigurationException | TransformerException e) {
+			disp.syncExec(new Runnable() {
+				@Override
+				public void run() {
+					MessageDialog.openInformation(disp.getActiveShell(), "Error has occured",
+							"An error in the produced Papyrus xmi file was detected. The file generation has stopped.");
+				}
+			});
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
