@@ -38,8 +38,10 @@ public class WriteDynamicOntology {
 					if (actionAndObject != null) {
 						String action = actionAndObject[0];
 						String object1 = actionAndObject[1];
-						ontology.addActionToActivity(node.getName(), action);
-						ontology.addObjectToActivity(node.getName(), object1);
+						if (!action.equals(""))
+							ontology.addActionToActivity(node.getName(), action);
+						if (!object1.equals(""))
+							ontology.addObjectToActivity(node.getName(), object1);
 					}
 				}
 
@@ -106,7 +108,7 @@ public class WriteDynamicOntology {
 				}
 			}
 		}
-		if (actobj[0].equals("") || actobj[1].equals(""))
+		if (actobj[0].equals("") && actobj[1].equals(""))
 			return null;
 		return actobj;
 	}

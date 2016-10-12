@@ -27,11 +27,16 @@ public class WriteStaticOntology {
 					if (actionAndObject != null) {
 						String action = actionAndObject[0];
 						String object1 = actionAndObject[1];
-						ontology.addAction(action);
-						ontology.connectRequirementToOperation(diagramName, action);
-						ontology.addObject(object1);
-						ontology.connectRequirementToConcept(diagramName, object1);
-						ontology.connectActionToObject(action, object1);
+						if (!action.equals("")) {
+							ontology.addAction(action);
+							ontology.connectRequirementToOperation(diagramName, action);
+						}
+						if (!object1.equals("")) {
+							ontology.addObject(object1);
+							ontology.connectRequirementToConcept(diagramName, object1);
+						}
+						if ((!action.equals("")) && (!object1.equals("")))
+							ontology.connectActionToObject(action, object1);
 					}
 				}
 			}
@@ -54,8 +59,10 @@ public class WriteStaticOntology {
 						for (String id : node.getIncomingSolidNodes()) {
 							for (XMIUseCaseNode connectedNode : nodes) {
 								if (connectedNode.getId().equals(id) && connectedNode.getType().equals(XMIUseCaseNode.ACTOR_TYPE)) {
-									ontology.connectActorToAction(connectedNode.getName(), action);
-									nodeIsConnectedToActor = true;
+									if (!action.equals("")) {
+										ontology.connectActorToAction(connectedNode.getName(), action);
+										nodeIsConnectedToActor = true;
+									}
 								} else if (connectedNode.getId().equals(id)
 										&& connectedNode.getType().equals(XMIUseCaseNode.USE_CASE_TYPE)) {
 									if (!connectedNode.getAnnotations().equals("")) {
@@ -63,7 +70,8 @@ public class WriteStaticOntology {
 												connectedNode.getName(), connectedNode.getAnnotations());
 										if (actionAndObject2 != null) {
 											String object2 = actionAndObject2[1];
-											ontology.connectObjectToObject(object1, object2);
+											if ((!object1.equals("")) && (!object2.equals("")))
+												ontology.connectObjectToObject(object1, object2);
 										}
 									}
 								}
@@ -73,8 +81,10 @@ public class WriteStaticOntology {
 						for (String id : node.getConnectedSolidNodes()) {
 							for (XMIUseCaseNode connectedNode : nodes) {
 								if (connectedNode.getId().equals(id) && connectedNode.getType().equals(XMIUseCaseNode.ACTOR_TYPE)) {
-									ontology.connectActorToAction(connectedNode.getName(), action);
-									nodeIsConnectedToActor = true;
+									if (!action.equals("")) {
+										ontology.connectActorToAction(connectedNode.getName(), action);
+										nodeIsConnectedToActor = true;
+									}
 								}
 							}
 						}
@@ -87,7 +97,8 @@ public class WriteStaticOntology {
 													connectedNode.getName(), connectedNode.getAnnotations());
 											if (actionAndObject2 != null) {
 												String object2 = actionAndObject2[1];
-												ontology.connectObjectToObject(object1, object2);
+												if ((!object1.equals("")) && (!object2.equals("")))
+													ontology.connectObjectToObject(object1, object2);
 											}
 										}
 									}
@@ -107,10 +118,12 @@ public class WriteStaticOntology {
 														connectedNode.getName(), connectedNode.getAnnotations());
 												if (actionAndObject2 != null) {
 													String object2 = actionAndObject2[1];
-													if (edge.getName().equalsIgnoreCase("extend")) {
-														ontology.connectObjectToObject(object1, object2);
-													} else if (edge.getName().equalsIgnoreCase("include")) {
-														ontology.connectObjectToObject(object2, object1);
+													if ((!object1.equals("")) && (!object2.equals(""))){
+														if (edge.getName().equalsIgnoreCase("extend")) {
+															ontology.connectObjectToObject(object1, object2);
+														} else if (edge.getName().equalsIgnoreCase("include")) {
+															ontology.connectObjectToObject(object2, object1);
+														}
 													}
 												}
 											}
