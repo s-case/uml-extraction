@@ -35,10 +35,12 @@ public class WriteDynamicOntology {
 				ontology.connectActivityDiagramToElement(diagramName, node.getName());
 				if (!node.getAnnotations().equals("")) {
 					String[] actionAndObject = getActionAndObject(node.getName(), node.getAnnotations());
-					String action = actionAndObject[0];
-					String object1 = actionAndObject[1];
-					ontology.addActionToActivity(node.getName(), action);
-					ontology.addObjectToActivity(node.getName(), object1);
+					if (actionAndObject != null) {
+						String action = actionAndObject[0];
+						String object1 = actionAndObject[1];
+						ontology.addActionToActivity(node.getName(), action);
+						ontology.addObjectToActivity(node.getName(), object1);
+					}
 				}
 
 			} else if (node.getType().equals("uml:DecisionNode")) {
