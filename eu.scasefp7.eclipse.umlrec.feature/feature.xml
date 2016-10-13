@@ -10,7 +10,7 @@
       license-feature-version="1.2.0" -->
 
    <description url="https://github.com/s-case/uml-extraction">
-      Frontend to UML recognizer module presented as an Eclipse import wizard. Image files of type JPG, JPEG2000, PNG and BMP are supported. Activity and use case diagrams can be detected. Result is stored in an XMI file and can be automatically opened in an associated editor.
+Frontend to UML recognizer module presented as an Eclipse import wizard. Image files of type JPG, JPEG2000, PNG and BMP are supported. Activity and use case diagrams can be detected. Result is stored in an XMI file and can be automatically converted to Papyrus models.
    </description>
 
    <copyright url="http://www.scasefp7.eu/copyright">
