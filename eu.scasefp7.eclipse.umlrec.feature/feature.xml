@@ -4,7 +4,10 @@
       label="UML recognizer"
       version="1.0.0.qualifier"
       provider-name="S-CASE Consortium"
-      plugin="eu.scasefp7.eclipse.umlrec.ui">
+      plugin="eu.scasefp7.eclipse.umlrec.ui"
+      image="s-case-feature.png">
+<!--      license-feature="eu.scasefp7.eclipse.license.feature"
+      license-feature-version="1.2.0" -->
 
    <description url="https://github.com/s-case/uml-extraction">
       Frontend to UML recognizer module presented as an Eclipse import wizard. Image files of type JPG, JPEG2000, PNG and BMP are supported. Activity and use case diagrams can be detected. Result is stored in an XMI file and can be automatically opened in an associated editor.
@@ -207,6 +210,7 @@
 
    <url>
       <update label="S-CASE update site" url="https://eclipse.scasefp7.com/eclipse/s-case_update_site/"/>
+      <discovery label="Papyrus update site (1.1.X / Eclipse Mars)" url="http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/mars"/>
    </url>
 
    <plugin
