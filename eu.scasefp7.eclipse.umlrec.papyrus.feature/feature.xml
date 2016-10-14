@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="eu.scasefp7.eclipse.umlrec.feature"
-      label="UML recognizer"
+      id="eu.scasefp7.eclipse.umlrec.papyrus.feature"
+      label="UML recognizer Papyrus integration"
       version="1.0.0.qualifier"
       provider-name="S-CASE Consortium"
-      plugin="eu.scasefp7.eclipse.umlrec.ui"
+      plugin="eu.scasefp7.eclipse.umlrec.papyrus"
       image="s-case-feature.png">
 
    <description url="https://github.com/s-case/uml-extraction">
-      Frontend to UML recognizer module presented as an Eclipse import wizard. Image files of type JPG, JPEG2000, PNG and BMP are supported. Activity and use case diagrams can be detected. Result is stored in an XMI file and can be automatically converted to Papyrus models.
+      Optional Papyrus integration for UML recognizer, automatically converts the recognition results to Papyrus models.
    </description>
 
    <copyright url="http://www.scasefp7.eu/copyright">
@@ -208,37 +208,11 @@
 
    <url>
       <update label="S-CASE update site" url="https://eclipse.scasefp7.com/eclipse/s-case_update_site/"/>
+      <discovery label="Papyrus update site (1.1.X / Eclipse Mars)" url="http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/mars"/>
    </url>
 
-   <includes
-         id="eu.scasefp7.eclipse.umlrec.papyrus.feature"
-         version="0.0.0"
-         optional="true"
-         search-location="both"/>
-
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.filesystem"/>
-      <import plugin="eu.scasefp7.eclipse.core" version="1.0.0" match="compatible"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.swt"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="com.google.guava" version="15.0.0" match="greaterOrEqual"/>
-      <import plugin="eu.scasefp7.eclipse.core" version="1.0.2" match="compatible"/>
-      <import plugin="eu.scasefp7.eclipse.umlrec" version="1.0.0" match="compatible"/>
-   </requires>
-
    <plugin
-         id="eu.scasefp7.eclipse.umlrec"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="eu.scasefp7.eclipse.umlrec.ui"
+         id="eu.scasefp7.eclipse.umlrec.papyrus"
          download-size="0"
          install-size="0"
          version="0.0.0"

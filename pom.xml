@@ -40,7 +40,7 @@
 		<module>eu.scasefp7.eclipse.umlrec.ui</module>		
 		<module>eu.scasefp7.eclipse.umlrec.papyrus</module>		
 		<module>eu.scasefp7.eclipse.umlrec.feature</module>
-		<module>eu.scasefp7.eclipse.umlrec.dependencies.feature</module>
+		<module>eu.scasefp7.eclipse.umlrec.papyrus.feature</module>
 		<module>eu.scasefp7.eclipse.umlrec.update-site</module>		
 	</modules>
 
