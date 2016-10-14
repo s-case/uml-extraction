@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Random;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -117,8 +118,9 @@ public class UMLrecognizerJob extends WorkspaceJob {
 			return Status.OK_STATUS;
 		}
 		monitor.done();
-		
-		File umlFile = writeInFile(content, log);
+		String umlDestFilename = destFileName.substring(destFileName.lastIndexOf('.')) == ".uml" ? destFileName : destFileName.substring(0, destFileName.lastIndexOf('.')) + ".uml";
+		umlDestFilename=checkIfFileExists(umlDestFilename);
+		File umlFile = writeInFile(content, log,umlDestFilename);
 		if (WizardUtilities.papyrusCommandExists()) {
 			createPapyrusFile(umlFile);
 
@@ -132,9 +134,30 @@ public class UMLrecognizerJob extends WorkspaceJob {
 	
 		return Status.OK_STATUS;
 	}
+	
+	private String checkIfFileExists(String fileName){
+		File file=new File(saveDestPath+File.separator+fileName);
+		if(file.exists()){			
+			String str=fileName.split("\\.")[0]+randomString(2)+".uml";
+			return str;
+		}
+			else
+				return fileName;
+	}
+	
+	private String randomString(int length) {
+		char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+		StringBuilder sb = new StringBuilder();
+		Random random = new Random();
+		for (int i = 0; i < length; i++) {
+		    char c = chars[random.nextInt(chars.length)];
+		    sb.append(c);
+		}
+	    return sb.toString();
+	}
 
-	private File writeInFile(String content, ILog log) {
-		String umlDestFilename = destFileName.substring(destFileName.lastIndexOf('.')) == ".uml" ? destFileName : destFileName.substring(0, destFileName.lastIndexOf('.')) + ".uml";
+	private File writeInFile(String content, ILog log, String umlDestFilename) {
+		
 		File fileToOpen = new File(saveDestPath+File.separator+umlDestFilename);
 		try {
 			if(!fileToOpen.exists()){

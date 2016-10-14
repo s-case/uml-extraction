@@ -16,7 +16,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -45,10 +47,21 @@ public class MyWizard extends Wizard implements IImportWizard{
 
 	@Override
 	public boolean performFinish() {
-		
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		File file=new File(workspace.getRoot().getLocation().toOSString() + pageTwo.getContainerFullPath().toOSString() + File.separator + getRequirementsFolderName(pageTwo.getContainerFullPath())+File.separator+pageTwo.getFileName());
+		if(file.exists()){
+			System.out.println();
+			int style = SWT.ERROR;
+			MessageBox dia = new MessageBox(this.getShell(), style);
+			dia.setText("Error");
+			dia.setMessage("\""+pageTwo.getFileName()+"\" already exists in the requirements folder. Please select another File Name."); 
+			dia.open();
+			//pageTwo.setPageComplete(false);
+			return false;
+		}
 		System.out.println(pageTwo.getTresh());
 
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		
 		Display disp = Display.getCurrent();
 		// The selectedProject variable will have been set by PageTwo.validatePage()
 		UMLrecognizerJob job = new UMLrecognizerJob(pageOne.getFilePath(),
