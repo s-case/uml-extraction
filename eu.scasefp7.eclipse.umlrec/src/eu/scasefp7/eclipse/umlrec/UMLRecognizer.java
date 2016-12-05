@@ -55,7 +55,7 @@ public class UMLRecognizer {
 	protected String _fileName = null;
 
 	/** The UML Server url */
-	final String BASE_URI = "http://109.231.121.171:8080/UMLServer/"; // TODO - get this from preferences
+	final String BASE_URI = "http://109.231.122.109:8080/UMLServer/"; // TODO - get this from preferences
 	private Image image = new Image();
 	private String xmi;
 	private boolean isUseCase;
